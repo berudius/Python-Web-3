@@ -18,6 +18,7 @@ def verify_password(plain: str, hashed: str) -> bool:
     return pwd_context.verify(plain, hashed)
 
 def authenticate_user(db: Session, login: str, password: str):
+    print(f"password = {password}")
     user = get_user_by_login(db, login)
     if not user:
         return None
