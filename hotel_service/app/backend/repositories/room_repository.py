@@ -27,8 +27,7 @@ def add_room(
     for number in room_numbers:
         new_physical_room = PhysicalRoom(
             room_model_id=new_room_model.id,
-            room_number=number,
-            is_booked=False
+            room_number=number
         )
         created_physical_rooms.append(new_physical_room)
     
@@ -98,3 +97,12 @@ def get_rooms_by_ids(db: Session, room_ids: List[int]) -> List[Room]:
     if not room_ids:
         return []
     return db.query(Room).filter(Room.id.in_(room_ids)).all()
+
+def get_physical_rooms_with_parents(db: Session, physical_room_ids: List[int]) -> List[PhysicalRoom]:
+    if not physical_room_ids:
+        return []
+    
+    return db.query(PhysicalRoom)\
+        .options(joinedload(PhysicalRoom.room_model)) \
+        .filter(PhysicalRoom.id.in_(physical_room_ids))\
+        .all()

@@ -11,12 +11,16 @@ class Booking(Base):
     id = Column(Integer, primary_key=True, index=True)
     order_date = Column(DateTime, nullable=False, server_default=func.now())
     arrival_date = Column(DateTime, nullable=False)
-    departure_date = Column(Date, nullable=False)
+    departure_date = Column(DateTime, nullable=False)
 
     user_id = Column(Integer, nullable=True)
     phone_number = Column((String(20)), nullable=False, index=True)
     status = Column(String(50), nullable=False, default="Розглядається")
 
-    rooms = relationship("Room", secondary=booking_room_association, back_populates="bookings")
+    physical_rooms = relationship(
+        "PhysicalRoom", 
+        secondary=booking_room_association, 
+        back_populates="bookings"
+    )
 
 

@@ -26,130 +26,27 @@
             color: #111;
         }
 
-        /* ---------- HEADER ---------- */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 16px 24px;
-            background: white;
-            border-bottom: 1px solid var(--border);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            z-index: 50;
-        }
+        /* ---------------- HEADER ---------------- */
+        header { position: fixed; top: 0; left: 0; width: 100%; padding: 16px 24px; background: white; border-bottom: 1px solid var(--border); z-index: 50; transition: transform 0.3s ease; }
+        header.hide { transform: translateY(-100%); }
+        header.show { transform: translateY(0); }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .nav { display: flex; align-items: center; justify-content: space-between; }
+        .brand a { display: flex; align-items: center; gap: 12px; text-decoration: none; color: #0f172a; }
+        .logo { width: 40px; height: 40px; border-radius: 8px; background: var(--accent); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px; }
+        
+        nav ul { display: flex; gap: 24px; list-style: none; margin: 0; padding: 0; }
+        nav li a { font-size: 14px; color: var(--muted); font-weight: 500; text-decoration: none; transition: color 0.2s; }
+        nav li a:hover { color: var(--accent); }
+        
+        .actions { display: flex; gap: 12px; }
+        .cta, .cta-outline { padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none;}
+        .cta { background: var(--accent); color: white; }
+        .cta:hover { background: var(--accent-dark); }
+        .cta-outline { border: 1px solid var(--border); color: #0f172a; background: white; }
+        .cta-outline:hover { border-color: var(--accent); color: var(--accent); }
 
-        header.hide {
-            transform: translateY(-100%);
-        }
-
-        header.show {
-            transform: translateY(0);
-        }
-
-        .container.nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .brand a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: #0f172a;
-        }
-
-        .logo {
-            width: 44px;
-            height: 44px;
-            border-radius: 8px;
-            background: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        nav ul {
-            display: flex;
-            gap: 24px;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        nav li a {
-            font-size: 14px;
-            color: var(--muted);
-            font-weight: 500;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        nav li a:hover {
-            color: var(--accent);
-        }
-
-        .actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        .cta, .cta-outline {
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            text-decoration: none;
-            transition: all 0.2s;
-            cursor: pointer;
-            border: none;
-        }
-
-        .cta {
-            background: var(--accent);
-            color: white;
-        }
-
-        .cta:hover {
-            background: #22605e;
-        }
-
-        .cta-outline {
-            border: 1px solid var(--border);
-            color: #0f172a;
-            background: white;
-        }
-
-        .cta-outline:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        @media (max-width: 768px) {
-            .container.nav {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-            nav ul {
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-
-            header {
-                padding: 15px 18px;
-            }
-        }
 
         /* ---------- MAIN & OTHER STYLES ---------- */
         main {
@@ -158,7 +55,7 @@
 
         /* ЗМІНЕНО: Основний контейнер тепер вужчий (700px замість 1000px) */
         .container {
-            max-width: 1000px; 
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -360,6 +257,7 @@
 
 </head>
 
+
 <body>
     <header>
         <div class="container nav">
@@ -400,38 +298,41 @@
         <!-- Цей div.container тепер має max-width: 700px -->
         <div class="container">
             <section class="title-card">
-                <h1>Edemium — цифрова система для гостей і готельного бізнесу</h1>
-                <p>Edemium створено на замовлення готельної мережі, щоб зробити перебування гостей зручнішим та
-                    підвищити
-                    ефективність використання послуг готелю.</p>
+                <h1>Edemium — простий спосіб забронювати відпочинок</h1>
+                <p>Ми зробили цей сервіс, щоб ви могли спланувати поїздку самостійно, без зайвих дзвінків та очікувань
+                    на лінії.</p>
             </section>
 
             <div class="grid">
                 <div>
                     <section id="about" class="card section">
-                        <h2>Про нас</h2>
-                        <p>Edemium — це система, яка дозволяє гостям швидко знайти інформацію про вільні номери,
-                            переглянути фотографії та обрати найкращий варіант для свого перебування.</p>
+                        <h2>Про сервіс</h2>
+                        <p>Edemium — це офіційний сайт бронювання нашої мережі. Тут ви бачите реальну наявність місць,
+                            актуальні ціни та детальний опис кожного типу номерів. Жодних посередників — ви взаємодієте
+                            з готелем напряму.</p>
                     </section>
 
                     <section class="card section">
-                        <h2>Проблема і рішення</h2>
-                        <p>Часто гостям доводиться витрачати час на дзвінки, щоб дізнатися про наявність номерів.
-                            Edemium централізує всю інформацію про номерний фонд в одному інтерфейсі, щоб кожен міг
-                            швидко знайти та (у майбутньому) забронювати житло.</p>
+                        <h2>Чому це зручно?</h2>
+                        <p>Більше не потрібно телефонувати на рецепцію і питати: "А є вільний стандарт?".
+                            Просто відкрийте календар, оберіть дати і подивіться доступні варіанти.
+                            Ви бачите реальні фото та повний список зручностей перед тим, як натиснути кнопку
+                            "Бронювати".</p>
                     </section>
 
                     <section class="card section">
-                        <h2>Місія</h2>
-                        <p>Наша мета — зробити послуги готелю прозорими та доступними, а для власника — відкрити нові
-                            можливості
-                            монетизації за рахунок зростання середнього чека та повторних бронювань.</p>
+                        <h2>Лояльність до гостей</h2>
+                        <p>Ми цінуємо відповідальне ставлення. Для постійних гостей, які часто подорожують і не
+                            скасовують
+                            поїздки в останній момент, система спрощує процес: бронювання підтверджуються миттєво,
+                            без додаткових перевірок чи дзвінків від адміністратора.</p>
                     </section>
 
                     <section id="services" class="card section">
-                        <h2>Функціонал</h2>
-                        <p>Наразі Edemium дозволяє переглядати деталізовану інформацію про всі номери нашого готелю.
-                            У найближчому майбутньому ми додамо функцію онлайн-бронювання та оплати.</p>
+                        <h2>Можливості</h2>
+                        <p>Все необхідне в одному місці: пошук вільних номерів за датами, фільтри за ціною та
+                            зручностями,
+                            а також особистий кабінет, де зберігається вся історія ваших поїздок.</p>
                     </section>
                 </div>
 
@@ -521,4 +422,5 @@
         });
     </script>
 </body>
+
 </html>

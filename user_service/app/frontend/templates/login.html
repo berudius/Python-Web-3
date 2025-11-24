@@ -25,90 +25,119 @@
       color: #111;
     }
 
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      padding: 18px 24px;
-      background: white;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease;
-      z-index: 10;
-    }
+    /* ---------------- HEADER ---------------- */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 16px 24px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    z-index: 50;
+    transition: transform 0.3s ease;
+}
 
-    header.hide {
-      transform: translateY(-100%);
-    }
+header.hide {
+    transform: translateY(-100%);
+}
+header.show {
+    transform: translateY(0);
+}
 
-    header.show {
-      transform: translateY(0);
-    }
+/* -------------- CONTAINER IN HEADER -------------- */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
 
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
+/* --------------- NAV WRAPPER --------------- */
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
+/* ---------------- BRAND / LOGO ---------------- */
+.brand a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #0f172a;
+}
 
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+.logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 18px;
+}
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+/* ---------------- NAVIGATION MENU ---------------- */
+nav ul {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
 
-    .logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 8px;
-      background: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 700;
-    }
+nav li a {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s;
+}
 
-    nav ul {
-      display: flex;
-      gap: 18px;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
+nav li a:hover {
+    color: var(--accent);
+}
 
-    nav li {
-      font-size: 15px;
-      color: var(--muted);
-      font-weight: 500;
-    }
+/* ---------------- ACTION BUTTONS ---------------- */
+.actions {
+    display: flex;
+    gap: 12px;
+}
 
-    nav li a:hover {
-      color: var(--accent);
-    }
+.cta,
+.cta-outline {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+}
 
-    .cta {
-      background: var(--accent);
-      color: #fff;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-weight: 600;
-    }
+.cta {
+    background: var(--accent);
+    color: white;
+}
+.cta:hover {
+    background: var(--accent-dark);
+}
 
-    .cta:hover {
-      background: #22605e;
-    }
+.cta-outline {
+    border: 1px solid var(--border);
+    color: #0f172a;
+    background: white;
+}
+.cta-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
 
     main {
       padding-top: 100px;
@@ -241,7 +270,7 @@
     <header>
         <div class="container nav">
             <div class="brand">
-                <a href="/" style="display: flex; align-items: center; gap: 12px;">
+                <a href="{{HOTEL_SERVICE_URL}}/">
                     <div class="logo">E</div>
                     <div>
                         <div style="font-weight:700">Edemium</div>
@@ -252,23 +281,23 @@
 
             <nav aria-label="Головне меню">
                 <ul>
-                    <li><a href="/rooms">Номери</a></li>
-                    <li><a href="/services">Сервіси</a></li>
-                    <li><a href="/about_us">Про нас</a></li>
-                    <li><a href="/my-bookings">Мої бронювання</a></li>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/rooms">Номери</a></li>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/services">Сервіси</a></li>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/my-bookings">Мої бронювання</a></li>
                     {% if is_admin %}
-                    <li><a href="/admin/panel">Адмін панель</a></li>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/admin/panel">Адмін панель</a></li>
                     {% endif %}
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/about_us">Про нас</a></li>
                 </ul>
             </nav>
 
             <div class="actions">
                 {% if not is_authorized %}
                 <a class="cta-outline" href="{{ USER_SERVICE_URL }}/login">Увійти</a>
-                <a class="cta" href="{{ USER_SERVICE_URL }}/registration">Зареєструватися</a>
                 {% else %}
                 <a class="cta-outline" href="{{ USER_SERVICE_URL }}/logout">Вийти</a>
                 {% endif %}
+                <a class="cta" href="{{ HOTEL_SERVICE_URL }}/rooms">Забронювати</a>
             </div>
         </div>
     </header>
@@ -279,7 +308,7 @@
         <h2>Вхід в акаунт</h2>
         {% if msg %}<p class="success">{{ msg }}</p>{% endif %}
         {% if error %}<p class="error">{{ error }}</p>{% endif %}
-        <form method="post" action="/login">
+        <form method="post" action="{{ USER_SERVICE_URL }}/login">
           <label>Логін:
             <input type="text" name="login" required>
           </label>
@@ -288,7 +317,7 @@
           </label>
           <button type="submit" class="btn-submit">Увійти</button>
         </form>
-        <p>Немає акаунта? <a href="/registration">Зареєструватися</a></p>
+        <p>Немає акаунта? <a href="{{ USER_SERVICE_URL }}/registration">Зареєструватися</a></p>
       </div>
     </div>
   </main>

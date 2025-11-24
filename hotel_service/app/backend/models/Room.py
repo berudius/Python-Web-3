@@ -8,7 +8,7 @@ class Room(Base):
     __tablename__ = "rooms"
     id = Column(Integer, primary_key=True, index=True)
     price = Column(Double, nullable=False)
-    description = Column (String(400), nullable=False)
+    description = Column (String(1000), nullable=False)
     type = Column(String(50), nullable=False)
     guest_capacity = Column(Integer, nullable=False)
     facilities = Column(JSON, nullable=True, default=[])
@@ -21,8 +21,6 @@ class Room(Base):
         cascade="all, delete-orphan"
     )
 
-    bookings = relationship("Booking", secondary=booking_room_association, back_populates="rooms")
-
 class PhysicalRoom(Base):
     __tablename__ = "physical_rooms"
     id = Column(Integer, primary_key=True, index=True)
@@ -32,3 +30,9 @@ class PhysicalRoom(Base):
     room_number = Column(String(20), nullable=False, unique=True) 
 
     room_model = relationship("Room", back_populates="physical_rooms")
+
+    bookings = relationship(
+        "Booking", 
+        secondary=booking_room_association, 
+        back_populates="physical_rooms"
+    )

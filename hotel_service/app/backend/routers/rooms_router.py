@@ -10,7 +10,7 @@ from common.db.database import get_db
 
 from ..config.jinja_template_config import templates
 from ..repositories import room_repository, room_image_repository, image_storage_repository 
-from common.config.services_paths import USER_SERVICE_URL
+from common.config.services_paths import USER_SERVICE_URL, HOTEL_SERVICE_URL
 from typing import List, Any, Dict, Optional
 
 router = APIRouter()
@@ -36,11 +36,6 @@ async def get_rooms(
         room_contexts = []
         for room_type in filtered_room_types:
             physical_rooms = room_type.physical_rooms
-            total_count = len(physical_rooms)
-            available_count = sum(1 for pr in physical_rooms if not pr.is_booked)
-            
-            if not is_admin and available_count == 0:
-                continue
 
             room_dict = {
                 "id": room_type.id,
@@ -58,8 +53,6 @@ async def get_rooms(
                 "json": room_dict,     
                 "images": image_urls,  
                 "physical_rooms": physical_rooms,
-                "total_count": total_count,
-                "available_count": available_count
             })
 
         context = {
@@ -71,7 +64,9 @@ async def get_rooms(
             "min_price": min_price,
             "max_price": max_price,
             "min_guests": min_guests,
-            "selected_facilities": facilities or []
+            "selected_facilities": facilities or [],
+            "USER_SERVICE_URL":USER_SERVICE_URL,
+            "HOTEL_SERVICE_URL":HOTEL_SERVICE_URL
         }
 
         if partial:

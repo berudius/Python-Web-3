@@ -29,16 +29,17 @@
             color: #111;
         }
 
+        /* ---------------- HEADER ---------------- */
         header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            padding: 18px 24px;
+            padding: 16px 24px;
             background: white;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--border);
+            z-index: 50;
             transition: transform 0.3s ease;
-            z-index: 10;
         }
 
         header.hide {
@@ -49,32 +50,32 @@
             transform: translateY(0);
         }
 
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
+        /* -------------- CONTAINER IN HEADER -------------- */
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 0 24px;
+            padding: 0 20px;
         }
 
+        /* --------------- NAV WRAPPER --------------- */
         .nav {
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        .brand {
+        /* ---------------- BRAND / LOGO ---------------- */
+        .brand a {
             display: flex;
             align-items: center;
             gap: 12px;
+            text-decoration: none;
+            color: #0f172a;
         }
 
         .logo {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             border-radius: 8px;
             background: var(--accent);
             display: flex;
@@ -82,58 +83,68 @@
             justify-content: center;
             color: white;
             font-weight: 700;
+            font-size: 18px;
         }
 
+        /* ---------------- NAVIGATION MENU ---------------- */
         nav ul {
             display: flex;
-            gap: 18px;
+            gap: 24px;
             list-style: none;
             margin: 0;
             padding: 0;
         }
 
-        nav li {
-            font-size: 15px;
+        nav li a {
+            font-size: 14px;
             color: var(--muted);
             font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
         }
 
         nav li a:hover {
             color: var(--accent);
         }
 
+        /* ---------------- ACTION BUTTONS ---------------- */
         .actions {
             display: flex;
-            align-items: center;
-            gap: 10px;
+            gap: 12px;
+        }
+
+        .cta,
+        .cta-outline {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
         }
 
         .cta {
             background: var(--accent);
-            color: #fff;
-            padding: 10px 14px;
-            border-radius: 10px;
-            font-weight: 600;
+            color: white;
         }
 
         .cta:hover {
-            background: #22605e;
+            background: var(--accent-dark);
         }
 
         .cta-outline {
-            border: 2px solid var(--accent);
-            color: var(--accent);
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-weight: 600;
-            background: transparent;
-            transition: 0.2s ease;
+            border: 1px solid var(--border);
+            color: #0f172a;
+            background: white;
         }
 
         .cta-outline:hover {
-            background: var(--accent);
-            color: white;
+            border-color: var(--accent);
+            color: var(--accent);
         }
+
 
         main {
             padding: 34px 24px;
@@ -926,7 +937,7 @@
     <header>
         <div class="container nav">
             <div class="brand">
-                <a href="{{HOTEL_SERVICE_URL}}/" style="display: flex; align-items: center; gap: 12px;">
+                <a href="{{HOTEL_SERVICE_URL}}/">
                     <div class="logo">E</div>
                     <div>
                         <div style="font-weight:700">Edemium</div>
@@ -1253,7 +1264,7 @@
                 </label>
 
                 <div class="filter-actions">
-                    <a href="/rooms" class="cta-secondary" type="button">Скинути все</a>
+                    <a href="{{HOTEL_SERVICE_URL}}/rooms" class="cta-secondary" type="button">Скинути все</a>
                     <button type="submit" class="cta">Застосувати</button>
                 </div>
             </form>
@@ -1300,11 +1311,9 @@
                         <h4>Номери №</h4>
                         <div class="physical-room-map">
                             {% for pr in ctx.physical_rooms %}
-                            <button type="button"
-                                class="physical-room-unit {% if pr['is_booked'] %}booked{% else %}available{% endif %}"
-                                data-id="{{ pr['id'] }}" data-room-name="{{ ctx.data['type'] }} {{ pr['room_number'] }}"
-                                {% if pr['is_booked'] %}disabled{% endif %} onclick="togglePhysicalRoom(this, event)"
-                                title="Номер {{ pr['room_number'] }} - {% if pr['is_booked'] %}Зайнято{% else %}Вільно{% endif %}">
+                            <button type="button" class="physical-room-unit" data-id="{{ pr['id'] }}"
+                                data-room-name="{{ ctx.data['type'] }} {{ pr['room_number'] }}"
+                                onclick="togglePhysicalRoom(this, event)" title="Номер {{ pr['room_number'] }}">
                                 {{ pr['room_number'] }}
                             </button>
                             {% endfor %}
@@ -1336,7 +1345,7 @@
                 <div class="card" style="grid-column: 1 / -1; text-align: center;">
                     <h3>Нічого не знайдено</h3>
                     <p>На жаль, за вашими критеріями немає вільних номерів. Спробуйте змінити фільтри або дати.</p>
-                    <a href="/rooms" class="cta" style="margin-top: 10px;">Скинути фільтри</a>
+                    <a href="{{HOTEL_SERVICE_URL}}/rooms" class="cta" style="margin-top: 10px;">Скинути фільтри</a>
                 </div>
                 {% endif %}
             </div>
@@ -1577,14 +1586,14 @@
         });
     </script>
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
 
-        // ============================================================
-        // 0. ГАРАНТОВАНЕ СТВОРЕННЯ TOAST (ВИПРАВЛЕНО Z-INDEX)
-        // ============================================================
-        if (!document.getElementById('error-toast')) {
-            const toastHTML = `
+            // ============================================================
+            // 0. ГАРАНТОВАНЕ СТВОРЕННЯ TOAST (ВИПРАВЛЕНО Z-INDEX)
+            // ============================================================
+            if (!document.getElementById('error-toast')) {
+                const toastHTML = `
             <div id="error-toast" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #fff; border-left: 4px solid #e53e3e; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 16px 24px; border-radius: 12px; display: flex; align-items: center; gap: 12px; z-index: 999999; opacity: 0; visibility: hidden; transition: all 0.3s ease; min-width: 320px; font-family: system-ui, sans-serif;">
                 <div style="color:#e53e3e; font-size:24px;">⚠️</div>
                 <div style="flex:1;">
@@ -1593,424 +1602,424 @@
                 </div>
                 <button onclick="hideToast()" style="background:none; border:none; font-size:24px; color:#a0aec0; cursor:pointer; padding:0 8px;">&times;</button>
             </div>`;
-            document.body.insertAdjacentHTML('beforeend', toastHTML);
-        }
-
-        window.showToast = function(message) {
-            const toast = document.getElementById('error-toast');
-            const textEl = document.getElementById('toast-message-text');
-            if (toast && textEl) {
-                textEl.textContent = message;
-                toast.style.opacity = '1';
-                toast.style.visibility = 'visible';
-                toast.style.top = '40px';
-                // Скидаємо попередній таймер, якщо він був
-                if (window.toastTimeout) clearTimeout(window.toastTimeout);
-                window.toastTimeout = setTimeout(() => hideToast(), 5000);
+                document.body.insertAdjacentHTML('beforeend', toastHTML);
             }
-        };
 
-        window.hideToast = function() {
-            const toast = document.getElementById('error-toast');
-            if (toast) {
-                toast.style.opacity = '0';
-                toast.style.visibility = 'hidden';
-                toast.style.top = '20px';
-            }
-        };
-
-        // Обробка помилки з URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const errorMsg = urlParams.get('error_message');
-        if (errorMsg) {
-            showToast(decodeURIComponent(errorMsg));
-            const newUrl = window.location.pathname + window.location.search.replace(/[\?&]error_message=[^&]+/, '').replace(/^&/, '?');
-            window.history.replaceState({}, document.title, newUrl);
-        }
-
-        // ============================================================
-        // 1. ЗМІННІ ТА ЕЛЕМЕНТИ
-        // ============================================================
-        const bookingCtaContainer = document.getElementById("booking-cta-container");
-        const bookingCtaButton = document.getElementById("booking-cta-button");
-        const HOTEL_SERVICE_URL = '{{HOTEL_SERVICE_URL}}';
-
-        const arrivalTrigger = document.getElementById('cdp-arrival-trigger');
-        const departureTrigger = document.getElementById('cdp-departure-trigger');
-        const arrivalInputHidden = document.getElementById('real-arrival-input');
-        const departureInputHidden = document.getElementById('real-departure-input');
-
-        const selectedPhysicalRoomIds = new Set();
-        let currentBlockedIntervals = []; 
-        let debounceTimer = null; // Таймер для UX затримки
-
-        // ============================================================
-        // 2. ЛОГІКА
-        // ============================================================
-
-        // Знаходить найближчий вільний час, якщо обраний зайнятий
-        function getEarliestAvailableTime(targetDate) {
-            if (!targetDate || currentBlockedIntervals.length === 0) return targetDate;
-            
-            // Копія масиву і сортування
-            const sortedIntervals = [...currentBlockedIntervals].sort((a, b) => a.start - b.start);
-            
-            let candidate = new Date(targetDate);
-            // Безпечний цикл (макс 10 стрибків), щоб не завис браузер
-            for(let i=0; i<10; i++) {
-                let conflict = false;
-                const t = candidate.getTime();
-                
-                for (const booking of sortedIntervals) {
-                    // Якщо час всередині бронювання [Start, End)
-                    if (t >= booking.start.getTime() && t < booking.end.getTime()) {
-                        candidate = new Date(booking.end); // Стрибаємо в кінець цього бронювання
-                        conflict = true;
-                        break;
-                    }
+            window.showToast = function (message) {
+                const toast = document.getElementById('error-toast');
+                const textEl = document.getElementById('toast-message-text');
+                if (toast && textEl) {
+                    textEl.textContent = message;
+                    toast.style.opacity = '1';
+                    toast.style.visibility = 'visible';
+                    toast.style.top = '40px';
+                    // Скидаємо попередній таймер, якщо він був
+                    if (window.toastTimeout) clearTimeout(window.toastTimeout);
+                    window.toastTimeout = setTimeout(() => hideToast(), 5000);
                 }
-                if (!conflict) return candidate;
-            }
-            return targetDate;
-        }
+            };
 
-        function isDateTimeBlocked(dateToCheck) {
-            if (!dateToCheck || currentBlockedIntervals.length === 0) return false;
-            const time = dateToCheck.getTime();
-            for (const booking of currentBlockedIntervals) {
-                if (time >= booking.start.getTime() && time < booking.end.getTime()) return true;
-            }
-            return false;
-        }
+            window.hideToast = function () {
+                const toast = document.getElementById('error-toast');
+                if (toast) {
+                    toast.style.opacity = '0';
+                    toast.style.visibility = 'hidden';
+                    toast.style.top = '20px';
+                }
+            };
 
-        // Оновлює текст у наших гарних інпутах
-        function updatePickerDisplay(instance, dateStr, triggerElement) {
-            if (!triggerElement) return;
-            if (!dateStr || !instance.selectedDates[0]) {
-                triggerElement.querySelector('.cdp-date').textContent = "Оберіть дату";
-                triggerElement.querySelector('.cdp-time').textContent = "--:--";
-                triggerElement.classList.remove('active');
-                return;
-            }
-            const d = instance.selectedDates[0];
-            // Форматування
-            const day = String(d.getDate()).padStart(2, '0');
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const year = d.getFullYear();
-            const hours = String(d.getHours()).padStart(2, '0');
-            const minutes = String(d.getMinutes()).padStart(2, '0');
-            
-            triggerElement.querySelector('.cdp-date').textContent = `${day}.${month}.${year}`;
-            triggerElement.querySelector('.cdp-time').textContent = `${hours}:${minutes}`;
-            triggerElement.classList.add('active');
-        }
-
-        // ============================================================
-        // 3. ОБРОБКА ЗМІНИ ДАТИ (UX MAGIC)
-        // ============================================================
-        const handleDateChange = (instance, isArrival) => {
-            const selectedDate = instance.selectedDates[0];
-            if (!selectedDate) return;
-
-            // --- 1. SMART AUTO-TIME (Миттєво) ---
-            // Якщо юзер вибрав день, а час за замовчуванням (12:00) зайнятий -> ставимо вільний
-            if (isDateTimeBlocked(selectedDate)) {
-                const smartTime = getEarliestAvailableTime(selectedDate);
-                // Оновлюємо без виклику подій, щоб не було циклу
-                instance.setDate(smartTime, false); 
+            // Обробка помилки з URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const errorMsg = urlParams.get('error_message');
+            if (errorMsg) {
+                showToast(decodeURIComponent(errorMsg));
+                const newUrl = window.location.pathname + window.location.search.replace(/[\?&]error_message=[^&]+/, '').replace(/^&/, '?');
+                window.history.replaceState({}, document.title, newUrl);
             }
 
-            // Оновлюємо візуальний текст відразу, щоб юзер бачив, що він робить
-            const currentValidDate = instance.selectedDates[0];
-            const trigger = isArrival ? arrivalTrigger : departureTrigger;
-            updatePickerDisplay(instance, instance.input.value, trigger);
+            // ============================================================
+            // 1. ЗМІННІ ТА ЕЛЕМЕНТИ
+            // ============================================================
+            const bookingCtaContainer = document.getElementById("booking-cta-container");
+            const bookingCtaButton = document.getElementById("booking-cta-button");
+            const HOTEL_SERVICE_URL = '{{HOTEL_SERVICE_URL}}';
 
-            // --- 2. БЛОКУВАННЯ МАЙБУТНЬОГО (maxDate) ---
-            // Якщо це Заїзд -> обмежуємо Виїзд до наступного бронювання
-            if (isArrival && fpDeparture) {
-                const minNextDay = new Date(currentValidDate.getTime() + 86400000); // +24h
-                fpDeparture.set('minDate', minNextDay);
+            const arrivalTrigger = document.getElementById('cdp-arrival-trigger');
+            const departureTrigger = document.getElementById('cdp-departure-trigger');
+            const arrivalInputHidden = document.getElementById('real-arrival-input');
+            const departureInputHidden = document.getElementById('real-departure-input');
 
-                // Шукаємо найближче бронювання ПІСЛЯ дати заїзду
-                let nextBookingStart = null;
+            const selectedPhysicalRoomIds = new Set();
+            let currentBlockedIntervals = [];
+            let debounceTimer = null; // Таймер для UX затримки
+
+            // ============================================================
+            // 2. ЛОГІКА
+            // ============================================================
+
+            // Знаходить найближчий вільний час, якщо обраний зайнятий
+            function getEarliestAvailableTime(targetDate) {
+                if (!targetDate || currentBlockedIntervals.length === 0) return targetDate;
+
+                // Копія масиву і сортування
                 const sortedIntervals = [...currentBlockedIntervals].sort((a, b) => a.start - b.start);
-                
-                for (const booking of sortedIntervals) {
-                    if (booking.start > currentValidDate) {
-                        nextBookingStart = booking.start;
-                        break; // Знайшли перше-ліпше
-                    }
-                }
-                
-                // Встановлюємо "стелю" для виїзду. Якщо null -> без обмежень.
-                fpDeparture.set('maxDate', nextBookingStart);
 
-                // Якщо дата виїзду вже стояла і порушує нові межі -> виправляємо
-                const currentDep = fpDeparture.selectedDates[0];
-                if (currentDep) {
-                    // Якщо виїзд раніше за (заїзд + 24г)
-                    if (currentDep < minNextDay) {
-                         const smartDep = getEarliestAvailableTime(minNextDay);
-                         fpDeparture.setDate(smartDep, false);
-                         updatePickerDisplay(fpDeparture, fpDeparture.input.value, departureTrigger);
+                let candidate = new Date(targetDate);
+                // Безпечний цикл (макс 10 стрибків), щоб не завис браузер
+                for (let i = 0; i < 10; i++) {
+                    let conflict = false;
+                    const t = candidate.getTime();
+
+                    for (const booking of sortedIntervals) {
+                        // Якщо час всередині бронювання [Start, End)
+                        if (t >= booking.start.getTime() && t < booking.end.getTime()) {
+                            candidate = new Date(booking.end); // Стрибаємо в кінець цього бронювання
+                            conflict = true;
+                            break;
+                        }
                     }
-                    // Якщо виїзд пізніше за maxDate (конфлікт)
-                    if (nextBookingStart && currentDep > nextBookingStart) {
-                        fpDeparture.clear(); // Просто очищаємо, хай юзер обере заново
-                        updatePickerDisplay(fpDeparture, "", departureTrigger);
-                    }
+                    if (!conflict) return candidate;
                 }
+                return targetDate;
             }
 
-            // --- 3. DEBOUNCE ВАЛІДАЦІЯ (Затримка 1.5с) ---
-            // Даємо юзеру час докрутити хвилини, перш ніж показувати помилку
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                
-                // Перевірка: чи точка часу зайнята (раптом юзер вручну ввів поганий час)
-                if (isDateTimeBlocked(currentValidDate)) {
-                    showToast(`Час ${instance.formatDate(currentValidDate, "H:i")} вже зайнятий!`);
-                    // Не очищаємо відразу, даємо шанс виправити, або можна очистити:
-                    instance.clear();
-                    updatePickerDisplay(instance, "", trigger);
+            function isDateTimeBlocked(dateToCheck) {
+                if (!dateToCheck || currentBlockedIntervals.length === 0) return false;
+                const time = dateToCheck.getTime();
+                for (const booking of currentBlockedIntervals) {
+                    if (time >= booking.start.getTime() && time < booking.end.getTime()) return true;
+                }
+                return false;
+            }
+
+            // Оновлює текст у наших гарних інпутах
+            function updatePickerDisplay(instance, dateStr, triggerElement) {
+                if (!triggerElement) return;
+                if (!dateStr || !instance.selectedDates[0]) {
+                    triggerElement.querySelector('.cdp-date').textContent = "Оберіть дату";
+                    triggerElement.querySelector('.cdp-time').textContent = "--:--";
+                    triggerElement.classList.remove('active');
+                    return;
+                }
+                const d = instance.selectedDates[0];
+                // Форматування
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                const hours = String(d.getHours()).padStart(2, '0');
+                const minutes = String(d.getMinutes()).padStart(2, '0');
+
+                triggerElement.querySelector('.cdp-date').textContent = `${day}.${month}.${year}`;
+                triggerElement.querySelector('.cdp-time').textContent = `${hours}:${minutes}`;
+                triggerElement.classList.add('active');
+            }
+
+            // ============================================================
+            // 3. ОБРОБКА ЗМІНИ ДАТИ (UX MAGIC)
+            // ============================================================
+            const handleDateChange = (instance, isArrival) => {
+                const selectedDate = instance.selectedDates[0];
+                if (!selectedDate) return;
+
+                // --- 1. SMART AUTO-TIME (Миттєво) ---
+                // Якщо юзер вибрав день, а час за замовчуванням (12:00) зайнятий -> ставимо вільний
+                if (isDateTimeBlocked(selectedDate)) {
+                    const smartTime = getEarliestAvailableTime(selectedDate);
+                    // Оновлюємо без виклику подій, щоб не було циклу
+                    instance.setDate(smartTime, false);
+                }
+
+                // Оновлюємо візуальний текст відразу, щоб юзер бачив, що він робить
+                const currentValidDate = instance.selectedDates[0];
+                const trigger = isArrival ? arrivalTrigger : departureTrigger;
+                updatePickerDisplay(instance, instance.input.value, trigger);
+
+                // --- 2. БЛОКУВАННЯ МАЙБУТНЬОГО (maxDate) ---
+                // Якщо це Заїзд -> обмежуємо Виїзд до наступного бронювання
+                if (isArrival && fpDeparture) {
+                    const minNextDay = new Date(currentValidDate.getTime() + 86400000); // +24h
+                    fpDeparture.set('minDate', minNextDay);
+
+                    // Шукаємо найближче бронювання ПІСЛЯ дати заїзду
+                    let nextBookingStart = null;
+                    const sortedIntervals = [...currentBlockedIntervals].sort((a, b) => a.start - b.start);
+
+                    for (const booking of sortedIntervals) {
+                        if (booking.start > currentValidDate) {
+                            nextBookingStart = booking.start;
+                            break; // Знайшли перше-ліпше
+                        }
+                    }
+
+                    // Встановлюємо "стелю" для виїзду. Якщо null -> без обмежень.
+                    fpDeparture.set('maxDate', nextBookingStart);
+
+                    // Якщо дата виїзду вже стояла і порушує нові межі -> виправляємо
+                    const currentDep = fpDeparture.selectedDates[0];
+                    if (currentDep) {
+                        // Якщо виїзд раніше за (заїзд + 24г)
+                        if (currentDep < minNextDay) {
+                            const smartDep = getEarliestAvailableTime(minNextDay);
+                            fpDeparture.setDate(smartDep, false);
+                            updatePickerDisplay(fpDeparture, fpDeparture.input.value, departureTrigger);
+                        }
+                        // Якщо виїзд пізніше за maxDate (конфлікт)
+                        if (nextBookingStart && currentDep > nextBookingStart) {
+                            fpDeparture.clear(); // Просто очищаємо, хай юзер обере заново
+                            updatePickerDisplay(fpDeparture, "", departureTrigger);
+                        }
+                    }
+                }
+
+                // --- 3. DEBOUNCE ВАЛІДАЦІЯ (Затримка 1.5с) ---
+                // Даємо юзеру час докрутити хвилини, перш ніж показувати помилку
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+
+                    // Перевірка: чи точка часу зайнята (раптом юзер вручну ввів поганий час)
+                    if (isDateTimeBlocked(currentValidDate)) {
+                        showToast(`Час ${instance.formatDate(currentValidDate, "H:i")} вже зайнятий!`);
+                        // Не очищаємо відразу, даємо шанс виправити, або можна очистити:
+                        instance.clear();
+                        updatePickerDisplay(instance, "", trigger);
+                        return;
+                    }
+
+                    // Якщо це виїзд - перевірка на 24 години
+                    if (!isArrival && fpArrival && fpArrival.selectedDates[0]) {
+                        const start = fpArrival.selectedDates[0];
+                        const end = currentValidDate;
+                        if ((end - start) < 86400000) {
+                            showToast("Мінімальний час — 24 години.");
+                            // Авто-фікс: ставимо рівно +24 години
+                            const fixDate = new Date(start.getTime() + 86400000);
+                            instance.setDate(fixDate, false);
+                            updatePickerDisplay(instance, instance.input.value, trigger);
+                        }
+                    }
+
+                }, 1500);
+            };
+
+            // ============================================================
+            // 4. ІНІЦІАЛІЗАЦІЯ
+            // ============================================================
+            const commonConfig = {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                time_24hr: true,
+                locale: "uk",
+                minDate: "today",
+                disableMobile: "true",
+                animate: true,
+                minuteIncrement: 1 // Дозволяємо будь-яку хвилину
+            };
+
+            let fpArrival, fpDeparture;
+
+            if (arrivalInputHidden && arrivalTrigger) {
+                fpArrival = flatpickr(arrivalInputHidden, {
+                    ...commonConfig,
+                    positionElement: arrivalTrigger,
+                    onChange: (selectedDates, dateStr) => handleDateChange(fpArrival, true)
+                });
+                arrivalTrigger.addEventListener('click', (e) => { e.preventDefault(); fpArrival.open(); });
+            }
+
+            if (departureInputHidden && departureTrigger) {
+                fpDeparture = flatpickr(departureInputHidden, {
+                    ...commonConfig,
+                    positionElement: departureTrigger,
+                    onChange: (selectedDates, dateStr) => handleDateChange(fpDeparture, false)
+                });
+                departureTrigger.addEventListener('click', (e) => { e.preventDefault(); fpDeparture.open(); });
+            }
+
+            // ============================================================
+            // 5. ЗАВАНТАЖЕННЯ ЗАЙНЯТОСТІ
+            // ============================================================
+            async function updateBlockedDates() {
+                const idsArray = [...selectedPhysicalRoomIds];
+
+                if (idsArray.length === 0) {
+                    if (bookingCtaContainer) bookingCtaContainer.style.display = "none";
+                    currentBlockedIntervals = [];
+                    if (fpArrival) { fpArrival.set('disable', []); fpArrival.clear(); fpArrival.redraw(); updatePickerDisplay(fpArrival, "", arrivalTrigger); }
+                    if (fpDeparture) { fpDeparture.set('disable', []); fpDeparture.clear(); fpDeparture.redraw(); updatePickerDisplay(fpDeparture, "", departureTrigger); }
                     return;
                 }
 
-                // Якщо це виїзд - перевірка на 24 години
-                if (!isArrival && fpArrival && fpArrival.selectedDates[0]) {
-                    const start = fpArrival.selectedDates[0];
-                    const end = currentValidDate;
-                    if ((end - start) < 86400000) {
-                        showToast("Мінімальний час — 24 години.");
-                        // Авто-фікс: ставимо рівно +24 години
-                        const fixDate = new Date(start.getTime() + 86400000);
-                        instance.setDate(fixDate, false);
-                        updatePickerDisplay(instance, instance.input.value, trigger);
-                    }
-                }
+                if (bookingCtaContainer) bookingCtaContainer.style.display = "block";
+                if (bookingCtaButton) bookingCtaButton.textContent = `Бронювати (${idsArray.length})`;
 
-            }, 1500); 
-        };
-
-        // ============================================================
-        // 4. ІНІЦІАЛІЗАЦІЯ
-        // ============================================================
-        const commonConfig = {
-            enableTime: true,
-            dateFormat: "Y-m-d H:i",
-            time_24hr: true,
-            locale: "uk",
-            minDate: "today",
-            disableMobile: "true",
-            animate: true,
-            minuteIncrement: 1 // Дозволяємо будь-яку хвилину
-        };
-
-        let fpArrival, fpDeparture;
-
-        if (arrivalInputHidden && arrivalTrigger) {
-            fpArrival = flatpickr(arrivalInputHidden, {
-                ...commonConfig,
-                positionElement: arrivalTrigger,
-                onChange: (selectedDates, dateStr) => handleDateChange(fpArrival, true)
-            });
-            arrivalTrigger.addEventListener('click', (e) => { e.preventDefault(); fpArrival.open(); });
-        }
-
-        if (departureInputHidden && departureTrigger) {
-            fpDeparture = flatpickr(departureInputHidden, {
-                ...commonConfig,
-                positionElement: departureTrigger,
-                onChange: (selectedDates, dateStr) => handleDateChange(fpDeparture, false)
-            });
-            departureTrigger.addEventListener('click', (e) => { e.preventDefault(); fpDeparture.open(); });
-        }
-
-        // ============================================================
-        // 5. ЗАВАНТАЖЕННЯ ЗАЙНЯТОСТІ
-        // ============================================================
-        async function updateBlockedDates() {
-            const idsArray = [...selectedPhysicalRoomIds];
-            
-            if (idsArray.length === 0) {
-                if(bookingCtaContainer) bookingCtaContainer.style.display = "none";
-                currentBlockedIntervals = [];
-                if(fpArrival) { fpArrival.set('disable', []); fpArrival.clear(); fpArrival.redraw(); updatePickerDisplay(fpArrival, "", arrivalTrigger); }
-                if(fpDeparture) { fpDeparture.set('disable', []); fpDeparture.clear(); fpDeparture.redraw(); updatePickerDisplay(fpDeparture, "", departureTrigger); }
-                return;
-            }
-
-            if(bookingCtaContainer) bookingCtaContainer.style.display = "block";
-            if(bookingCtaButton) bookingCtaButton.textContent = `Бронювати (${idsArray.length})`;
-
-            try {
-                const params = new URLSearchParams();
-                idsArray.forEach(id => params.append("ids", id));
-                const response = await fetch(`${HOTEL_SERVICE_URL}/rooms/check_dates?${params.toString()}`);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const mergedIntervals = await response.json();
-
-                currentBlockedIntervals = mergedIntervals.map(i => ({
-                    start: new Date(i.start),
-                    end: new Date(i.end)
-                }));
-
-                // Блокуємо день у календарі ТІЛЬКИ якщо він ПОВНІСТЮ зайнятий
-                const disableFunction = function (date) {
-                    const dayStart = new Date(date); dayStart.setHours(0, 0, 0, 0);
-                    const dayEnd = new Date(date); dayEnd.setHours(23, 59, 59, 999);
-                    for (const booking of currentBlockedIntervals) {
-                        if (booking.start <= dayStart && booking.end >= dayEnd) return true;
-                    }
-                    return false;
-                };
-
-                if (fpArrival) { fpArrival.set('disable', [disableFunction]); fpArrival.redraw(); }
-                if (fpDeparture) { fpDeparture.set('disable', [disableFunction]); fpDeparture.redraw(); }
-
-            } catch (err) {
-                console.error("Error:", err);
-            }
-        }
-
-        window.togglePhysicalRoom = function (btn, event) {
-            if (event) { event.stopPropagation(); event.preventDefault(); }
-            const id = btn.getAttribute("data-id");
-            if (!id) return;
-            
-            if (selectedPhysicalRoomIds.has(id)) {
-                selectedPhysicalRoomIds.delete(id);
-                btn.classList.remove("selected");
-                btn.classList.remove("booked");
-            } else {
-                selectedPhysicalRoomIds.add(id);
-                btn.classList.add("selected");
-            }
-            updateBlockedDates();
-        };
-
-        // ============================================================
-        // 6. ВІДПРАВКА
-        // ============================================================
-        if (bookingCtaButton) {
-            bookingCtaButton.addEventListener("click", () => {
-                if (!fpArrival || !fpDeparture) return;
-                const arrivalDate = fpArrival.selectedDates[0];
-                const departureDate = fpDeparture.selectedDates[0];
-
-                if (selectedPhysicalRoomIds.size === 0) { showToast("Оберіть хоч один номер."); return; }
-                if (!arrivalDate || !departureDate) { showToast("Вкажіть дати заїзду та виїзду."); return; }
-
-                // Фінальна перевірка (тут без затримки)
-                if (isDateTimeBlocked(arrivalDate)) { showToast("Час заїзду зайнятий! Оберіть інший."); return; }
-                if ((departureDate - arrivalDate) < 86400000) { showToast("Мінімальний час — 24 години."); return; }
-                
-                // Додаткова перевірка на конфлікт діапазону
-                for (const booking of currentBlockedIntervals) {
-                    if (arrivalDate < booking.end && departureDate > booking.start) {
-                        showToast("Діапазон перетинається з існуючим бронюванням!");
-                        return;
-                    }
-                }
-
-                // Корекція Timezone
-                const toLocalISOString = (date) => {
-                    const offset = date.getTimezoneOffset() * 60000;
-                    return new Date(date.getTime() - offset).toISOString().slice(0, -1);
-                };
-
-                const params = new URLSearchParams();
-                [...selectedPhysicalRoomIds].forEach(id => params.append("physical_room_ids", id));
-                params.append("arrival_date", toLocalISOString(arrivalDate));
-                params.append("departure_date", toLocalISOString(departureDate));
-
-                window.location.href = `${HOTEL_SERVICE_URL}/bookings?${params.toString()}`;
-            });
-        }
-
-        // --- ІНІЦІАЛІЗАЦІЯ З ФІЛЬТРІВ ---
-        const filterArrivalInput = document.querySelector('input[name="arrival_date"]');
-        const filterDepartureInput = document.querySelector('input[name="departure_date"]');
-        if (filterArrivalInput && filterArrivalInput.value && fpArrival) {
-            fpArrival.setDate(filterArrivalInput.value);
-            updatePickerDisplay(fpArrival, filterArrivalInput.value, arrivalTrigger);
-            // При завантаженні теж ставимо обмеження
-            const arrDate = new Date(filterArrivalInput.value);
-            if (fpDeparture) {
-                 fpDeparture.set('minDate', new Date(arrDate.getTime() + 86400000));
-                 handleDateChange(fpArrival, true); // Викликаємо логіку maxDate
-            }
-        }
-        if (filterDepartureInput && filterDepartureInput.value && fpDeparture) {
-            fpDeparture.setDate(filterDepartureInput.value);
-            updatePickerDisplay(fpDeparture, filterDepartureInput.value, departureTrigger);
-        }
-
-        // (Код Слайдера і Хедера залишається тим самим)
-        const allRoomCards = document.querySelectorAll(".room-card");
-        allRoomCards.forEach(card => {
-            const container = card.querySelector(".room-image-container");
-            if (!container) return;
-            const prevButton = container.querySelector(".slider-btn-prev");
-            const nextButton = container.querySelector(".slider-btn-next");
-            const images = container.querySelectorAll(".room-slide-image");
-            if (images.length > 1 && prevButton && nextButton) {
-                let currentSlideIndex = 0;
-                const showSlide = (idx) => { images.forEach(img => img.classList.remove('active')); images[idx].classList.add('active'); };
-                nextButton.addEventListener("click", (e) => { e.stopPropagation(); e.preventDefault(); currentSlideIndex = (currentSlideIndex + 1) % images.length; showSlide(currentSlideIndex); });
-                prevButton.addEventListener("click", (e) => { e.stopPropagation(); e.preventDefault(); currentSlideIndex = (currentSlideIndex - 1 + images.length) % images.length; showSlide(currentSlideIndex); });
-            }
-            card.addEventListener("click", e => {
-                if (e.target.closest("button") || e.target.closest(".physical-room-unit") || e.target.closest(".admin-actions") || e.target.closest(".flatpickr-calendar")) return;
-                const roomId = card.dataset.roomId;
-                if (roomId) {
-                    let url = `/rooms/${roomId}`;
+                try {
                     const params = new URLSearchParams();
-                    if (filterArrivalInput?.value) params.append("arrival_date", filterArrivalInput.value);
-                    if (filterDepartureInput?.value) params.append("departure_date", filterDepartureInput.value);
-                    if (params.toString()) url += `?${params.toString()}`;
-                    window.location.href = url;
-                }
-            });
-        });
-        
-        const header = document.querySelector("header");
-        let lastScroll = 0;
-        if(header) {
-             window.addEventListener("scroll", () => {
-                const currentScroll = window.pageYOffset;
-                if (currentScroll <= 0) { header.classList.remove("hide"); header.classList.add("show"); return; }
-                if (currentScroll > lastScroll && !header.classList.contains("hide")) { header.classList.remove("show"); header.classList.add("hide"); } 
-                else if (currentScroll < lastScroll && header.classList.contains("hide")) { header.classList.remove("hide"); header.classList.add("show"); }
-                lastScroll = currentScroll;
-            });
-        }
-        
-        const filterButton = document.getElementById("toggle-filter-btn");
-        const filterContainer = document.getElementById("filter-container");
-        if (filterButton && filterContainer) {
-            const urlParams = new URLSearchParams(window.location.search);
-            urlParams.delete("sort_by");
-            if (urlParams.toString()) filterContainer.style.display = "block";
-            filterButton.addEventListener("click", () => {
-                const isHidden = filterContainer.style.display === "none";
-                filterContainer.style.display = isHidden ? "block" : "none";
-            });
-        }
-        window.cleanFilterForm = function (event) {
-            const form = document.getElementById("filter-form");
-            const inputs = form.querySelectorAll("input, select");
-            const disabledInputs = [];
-            inputs.forEach(input => {
-                if (input.value === "" && input.name !== "sort_by") { input.disabled = true; disabledInputs.push(input); }
-            });
-            setTimeout(() => { disabledInputs.forEach(i => (i.disabled = false)); }, 0);
-            return true;
-        };
+                    idsArray.forEach(id => params.append("ids", id));
+                    const response = await fetch(`${HOTEL_SERVICE_URL}/rooms/check_dates?${params.toString()}`);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const mergedIntervals = await response.json();
 
-        if(bookingCtaContainer) bookingCtaContainer.style.display = "none";
-    });
-</script>
+                    currentBlockedIntervals = mergedIntervals.map(i => ({
+                        start: new Date(i.start),
+                        end: new Date(i.end)
+                    }));
+
+                    // Блокуємо день у календарі ТІЛЬКИ якщо він ПОВНІСТЮ зайнятий
+                    const disableFunction = function (date) {
+                        const dayStart = new Date(date); dayStart.setHours(0, 0, 0, 0);
+                        const dayEnd = new Date(date); dayEnd.setHours(23, 59, 59, 999);
+                        for (const booking of currentBlockedIntervals) {
+                            if (booking.start <= dayStart && booking.end >= dayEnd) return true;
+                        }
+                        return false;
+                    };
+
+                    if (fpArrival) { fpArrival.set('disable', [disableFunction]); fpArrival.redraw(); }
+                    if (fpDeparture) { fpDeparture.set('disable', [disableFunction]); fpDeparture.redraw(); }
+
+                } catch (err) {
+                    console.error("Error:", err);
+                }
+            }
+
+            window.togglePhysicalRoom = function (btn, event) {
+                if (event) { event.stopPropagation(); event.preventDefault(); }
+                const id = btn.getAttribute("data-id");
+                if (!id) return;
+
+                if (selectedPhysicalRoomIds.has(id)) {
+                    selectedPhysicalRoomIds.delete(id);
+                    btn.classList.remove("selected");
+                    btn.classList.remove("booked");
+                } else {
+                    selectedPhysicalRoomIds.add(id);
+                    btn.classList.add("selected");
+                }
+                updateBlockedDates();
+            };
+
+            // ============================================================
+            // 6. ВІДПРАВКА
+            // ============================================================
+            if (bookingCtaButton) {
+                bookingCtaButton.addEventListener("click", () => {
+                    if (!fpArrival || !fpDeparture) return;
+                    const arrivalDate = fpArrival.selectedDates[0];
+                    const departureDate = fpDeparture.selectedDates[0];
+
+                    if (selectedPhysicalRoomIds.size === 0) { showToast("Оберіть хоч один номер."); return; }
+                    if (!arrivalDate || !departureDate) { showToast("Вкажіть дати заїзду та виїзду."); return; }
+
+                    // Фінальна перевірка (тут без затримки)
+                    if (isDateTimeBlocked(arrivalDate)) { showToast("Час заїзду зайнятий! Оберіть інший."); return; }
+                    if ((departureDate - arrivalDate) < 86400000) { showToast("Мінімальний час — 24 години."); return; }
+
+                    // Додаткова перевірка на конфлікт діапазону
+                    for (const booking of currentBlockedIntervals) {
+                        if (arrivalDate < booking.end && departureDate > booking.start) {
+                            showToast("Діапазон перетинається з існуючим бронюванням!");
+                            return;
+                        }
+                    }
+
+                    // Корекція Timezone
+                    const toLocalISOString = (date) => {
+                        const offset = date.getTimezoneOffset() * 60000;
+                        return new Date(date.getTime() - offset).toISOString().slice(0, -1);
+                    };
+
+                    const params = new URLSearchParams();
+                    [...selectedPhysicalRoomIds].forEach(id => params.append("physical_room_ids", id));
+                    params.append("arrival_date", toLocalISOString(arrivalDate));
+                    params.append("departure_date", toLocalISOString(departureDate));
+
+                    window.location.href = `${HOTEL_SERVICE_URL}/bookings?${params.toString()}`;
+                });
+            }
+
+            // --- ІНІЦІАЛІЗАЦІЯ З ФІЛЬТРІВ ---
+            const filterArrivalInput = document.querySelector('input[name="arrival_date"]');
+            const filterDepartureInput = document.querySelector('input[name="departure_date"]');
+            if (filterArrivalInput && filterArrivalInput.value && fpArrival) {
+                fpArrival.setDate(filterArrivalInput.value);
+                updatePickerDisplay(fpArrival, filterArrivalInput.value, arrivalTrigger);
+                // При завантаженні теж ставимо обмеження
+                const arrDate = new Date(filterArrivalInput.value);
+                if (fpDeparture) {
+                    fpDeparture.set('minDate', new Date(arrDate.getTime() + 86400000));
+                    handleDateChange(fpArrival, true); // Викликаємо логіку maxDate
+                }
+            }
+            if (filterDepartureInput && filterDepartureInput.value && fpDeparture) {
+                fpDeparture.setDate(filterDepartureInput.value);
+                updatePickerDisplay(fpDeparture, filterDepartureInput.value, departureTrigger);
+            }
+
+            // (Код Слайдера і Хедера залишається тим самим)
+            const allRoomCards = document.querySelectorAll(".room-card");
+            allRoomCards.forEach(card => {
+                const container = card.querySelector(".room-image-container");
+                if (!container) return;
+                const prevButton = container.querySelector(".slider-btn-prev");
+                const nextButton = container.querySelector(".slider-btn-next");
+                const images = container.querySelectorAll(".room-slide-image");
+                if (images.length > 1 && prevButton && nextButton) {
+                    let currentSlideIndex = 0;
+                    const showSlide = (idx) => { images.forEach(img => img.classList.remove('active')); images[idx].classList.add('active'); };
+                    nextButton.addEventListener("click", (e) => { e.stopPropagation(); e.preventDefault(); currentSlideIndex = (currentSlideIndex + 1) % images.length; showSlide(currentSlideIndex); });
+                    prevButton.addEventListener("click", (e) => { e.stopPropagation(); e.preventDefault(); currentSlideIndex = (currentSlideIndex - 1 + images.length) % images.length; showSlide(currentSlideIndex); });
+                }
+                card.addEventListener("click", e => {
+                    if (e.target.closest("button") || e.target.closest(".physical-room-unit") || e.target.closest(".admin-actions") || e.target.closest(".flatpickr-calendar")) return;
+                    const roomId = card.dataset.roomId;
+                    if (roomId) {
+                        let url = `/rooms/${roomId}`;
+                        const params = new URLSearchParams();
+                        if (filterArrivalInput?.value) params.append("arrival_date", filterArrivalInput.value);
+                        if (filterDepartureInput?.value) params.append("departure_date", filterDepartureInput.value);
+                        if (params.toString()) url += `?${params.toString()}`;
+                        window.location.href = url;
+                    }
+                });
+            });
+
+            const header = document.querySelector("header");
+            let lastScroll = 0;
+            if (header) {
+                window.addEventListener("scroll", () => {
+                    const currentScroll = window.pageYOffset;
+                    if (currentScroll <= 0) { header.classList.remove("hide"); header.classList.add("show"); return; }
+                    if (currentScroll > lastScroll && !header.classList.contains("hide")) { header.classList.remove("show"); header.classList.add("hide"); }
+                    else if (currentScroll < lastScroll && header.classList.contains("hide")) { header.classList.remove("hide"); header.classList.add("show"); }
+                    lastScroll = currentScroll;
+                });
+            }
+
+            const filterButton = document.getElementById("toggle-filter-btn");
+            const filterContainer = document.getElementById("filter-container");
+            if (filterButton && filterContainer) {
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.delete("sort_by");
+                if (urlParams.toString()) filterContainer.style.display = "block";
+                filterButton.addEventListener("click", () => {
+                    const isHidden = filterContainer.style.display === "none";
+                    filterContainer.style.display = isHidden ? "block" : "none";
+                });
+            }
+            window.cleanFilterForm = function (event) {
+                const form = document.getElementById("filter-form");
+                const inputs = form.querySelectorAll("input, select");
+                const disabledInputs = [];
+                inputs.forEach(input => {
+                    if (input.value === "" && input.name !== "sort_by") { input.disabled = true; disabledInputs.push(input); }
+                });
+                setTimeout(() => { disabledInputs.forEach(i => (i.disabled = false)); }, 0);
+                return true;
+            };
+
+            if (bookingCtaContainer) bookingCtaContainer.style.display = "none";
+        });
+    </script>
 
 
 

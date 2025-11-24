@@ -12,7 +12,7 @@
             --bg: #f1f5f9;
             --card-bg: #ffffff;
             --border: #e2e8f0;
-            
+
             /* Status Colors */
             --success-bg: #dcfce7;
             --success-text: #166534;
@@ -26,65 +26,344 @@
             --gray-text: #4b5563;
         }
 
-        * { box-sizing: border-box; }
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; margin: 0; background: var(--bg); color: #0f172a; line-height: 1.5; }
+        * {
+            box-sizing: border-box;
+        }
 
-        header { position: fixed; top: 0; left: 0; width: 100%; padding: 16px 24px; background: white; border-bottom: 1px solid var(--border); z-index: 50; transition: transform 0.3s ease; }
-        header.hide { transform: translateY(-100%); }
-        header.show { transform: translateY(0); }
-        
-        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
-        .nav { display: flex; align-items: center; justify-content: space-between; }
-        .brand a { display: flex; align-items: center; gap: 12px; text-decoration: none; color: #0f172a; }
-        .logo { width: 40px; height: 40px; border-radius: 8px; background: var(--accent); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px; }
-        
-        nav ul { display: flex; gap: 24px; list-style: none; margin: 0; padding: 0; }
-        nav li a { font-size: 14px; color: var(--muted); font-weight: 500; text-decoration: none; transition: color 0.2s; }
-        nav li a:hover { color: var(--accent); }
-        
-        .actions { display: flex; gap: 12px; }
-        .cta, .cta-outline { padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none;}
-        .cta { background: var(--accent); color: white; }
-        .cta:hover { background: var(--accent-dark); }
-        .cta-outline { border: 1px solid var(--border); color: #0f172a; background: white; }
-        .cta-outline:hover { border-color: var(--accent); color: var(--accent); }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            background: var(--bg);
+            color: #0f172a;
+            line-height: 1.5;
+        }
 
-        main { padding-top: 100px; padding-bottom: 60px; }
+        /* ---------------- HEADER ---------------- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 16px 24px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            z-index: 50;
+            transition: transform 0.3s ease;
+        }
 
-        h1 { font-size: 24px; font-weight: 700; margin-bottom: 24px; color: #0f172a; }
-        .card { background: var(--card-bg); border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid var(--border); overflow: hidden; margin-bottom: 24px; }
-        
-        .message-card { padding: 16px; border-radius: 12px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; font-size: 14px; }
-        .message-card.success { background: var(--success-bg); color: var(--success-text); border: 1px solid #bbf7d0; }
-        .message-card.error { background: var(--danger-bg); color: var(--danger-text); border: 1px solid #fecaca; }
-        .message-card.info { background: var(--info-bg); color: var(--info-text); border: 1px solid #bae6fd; }
+        header.hide {
+            transform: translateY(-100%);
+        }
 
-        .table-responsive { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th { text-align: left; padding: 16px 24px; background: #f8fafc; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-        td { padding: 20px 24px; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 14px; }
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: #fcfcfc; }
+        header.show {
+            transform: translateY(0);
+        }
 
-        .booking-id { font-weight: 700; color: #0f172a; font-family: monospace; font-size: 15px; }
-        .meta-date { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; }
-        .date-range { display: flex; align-items: center; gap: 8px; font-weight: 600; color: #334155; }
-        .date-arrow { color: var(--muted); font-size: 12px; }
-        .time-badge { font-size: 12px; color: var(--muted); background: #f1f5f9; padding: 2px 6px; border-radius: 4px; margin-left: 4px; font-weight: 500; }
-        .room-tag { display: inline-block; background: #f1f5f9; padding: 4px 8px; border-radius: 6px; font-size: 13px; color: #475569; margin-bottom: 4px; border: 1px solid #e2e8f0; }
-        
-        .status-badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 99px; font-size: 12px; font-weight: 600; }
-        .status-badge[data-status="Підтверджено"] { background: var(--success-bg); color: var(--success-text); }
-        .status-badge[data-status="Завершено"] { background: var(--info-bg); color: var(--info-text); }
-        .status-badge[data-status="Розглядається"] { background: var(--warning-bg); color: var(--warning-text); }
-        .status-badge[data-status="Відхилено"] { background: var(--danger-bg); color: var(--danger-text); }
-        .status-badge[data-status="Скасовано клієнтом"] { background: var(--gray-bg); color: var(--gray-text); text-decoration: line-through; }
+        /* -------------- CONTAINER IN HEADER -------------- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-        .auth-cta-card { text-align: center; padding: 60px 20px; }
-        .auth-cta-card h2 { margin-bottom: 12px; }
-        .auth-cta-card p { color: var(--muted); max-width: 480px; margin: 0 auto 24px; }
-        
-        .spacer { margin-top: 110px; }
+        /* --------------- NAV WRAPPER --------------- */
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* ---------------- BRAND / LOGO ---------------- */
+        .brand a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #0f172a;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* ---------------- NAVIGATION MENU ---------------- */
+        nav ul {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav li a {
+            font-size: 14px;
+            color: var(--muted);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        nav li a:hover {
+            color: var(--accent);
+        }
+
+        /* ---------------- ACTION BUTTONS ---------------- */
+        .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .cta,
+        .cta-outline {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .cta {
+            background: var(--accent);
+            color: white;
+        }
+
+        .cta:hover {
+            background: var(--accent-dark);
+        }
+
+        .cta-outline {
+            border: 1px solid var(--border);
+            color: #0f172a;
+            background: white;
+        }
+
+        .cta-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+
+        main {
+            padding-top: 100px;
+            padding-bottom: 60px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #0f172a;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .message-card {
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .message-card.success {
+            background: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid #bbf7d0;
+        }
+
+        .message-card.error {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+            border: 1px solid #fecaca;
+        }
+
+        .message-card.info {
+            background: var(--info-bg);
+            color: var(--info-text);
+            border: 1px solid #bae6fd;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th {
+            text-align: left;
+            padding: 16px 24px;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #fcfcfc;
+        }
+
+        .booking-id {
+            font-weight: 700;
+            color: #0f172a;
+            font-family: monospace;
+            font-size: 15px;
+        }
+
+        .meta-date {
+            display: block;
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .date-arrow {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .time-badge {
+            font-size: 12px;
+            color: var(--muted);
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 4px;
+            font-weight: 500;
+        }
+
+        .room-tag {
+            display: inline-block;
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #475569;
+            margin-bottom: 4px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge[data-status="Підтверджено"] {
+            background: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .status-badge[data-status="Завершено"] {
+            background: var(--info-bg);
+            color: var(--info-text);
+        }
+
+        .status-badge[data-status="Розглядається"] {
+            background: var(--warning-bg);
+            color: var(--warning-text);
+        }
+
+        .status-badge[data-status="Відхилено"] {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+        }
+
+        .status-badge[data-status="Скасовано клієнтом"] {
+            background: var(--gray-bg);
+            color: var(--gray-text);
+            text-decoration: line-through;
+        }
+
+        .auth-cta-card {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .auth-cta-card h2 {
+            margin-bottom: 12px;
+        }
+
+        .auth-cta-card p {
+            color: var(--muted);
+            max-width: 480px;
+            margin: 0 auto 24px;
+        }
+
+        .spacer {
+            margin-top: 110px;
+        }
+
+        /* ... ваші існуючі стилі ... */
+
+        /* Стиль кнопки скасування */
+        .btn-cancel {
+            background-color: #fff;
+            color: var(--danger-text);
+            border: 1px solid var(--danger-text);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-cancel:hover {
+            background-color: var(--danger-bg);
+            border-color: var(--danger-text);
+        }
     </style>
 </head>
 
@@ -96,6 +375,7 @@
                     <div class="logo">E</div>
                     <div>
                         <div style="font-weight:700">Edemium</div>
+                        <div style="font-size:12px; color:var(--muted)">Цифровий сервіс готельної мережі</div>
                     </div>
                 </a>
             </div>
@@ -132,7 +412,7 @@
             <span>{{ success_message }}</span>
         </div>
         {% endif %}
-        
+
         {% if booking_error %}
         <div class="message-card error">
             <span>{{ booking_error }}</span>
@@ -140,88 +420,99 @@
         {% endif %}
 
         {% if is_authorized %}
-            
-            {% if trust_level > 0 %}
-            <div class="message-card info">
-                <span>Ваш рівень довіри: <strong>{{ trust_level }}</strong>. Це дозволяє швидше бронювати номери.</span>
-            </div>
-            {% endif %}
 
-            {% if my_bookings %}
-            <div class="card table-responsive" style="padding: 0;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th width="20%">Бронювання</th>
-                            <th width="35%">Період проживання</th>
-                            <th width="30%">Номери</th>
-                            <th width="15%">Статус</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for booking in my_bookings %}
-                        <tr id="booking-row-{{ booking.id }}">
-                            <td>
-                                <div class="booking-id">#{{ booking.id }}</div>
-                                <span class="meta-date" title="Дата створення">
-                                    Створено: {{ booking.order_date.strftime('%d.%m.%y %H:%M') if booking.order_date else '-' }}
-                                </span>
-                            </td>
+        {% if trust_level > 0 %}
+        <div class="message-card info">
+            <span>Ваш рівень довіри: <strong>{{ trust_level }}</strong>. Це дозволяє швидше бронювати номери.</span>
+        </div>
+        {% endif %}
 
-                            <td>
-                                <div style="display: flex; flex-direction: column; gap: 4px;">
-                                    <div class="date-range">
-                                        <span>{{ booking.arrival_date.strftime('%d.%m.%Y') }}</span>
-                                        <span class="time-badge">{{ booking.arrival_date.strftime('%H:%M') }}</span>
-                                    </div>
-                                    <span class="date-arrow" style="margin-left: 4px;">↓ до</span>
-                                    <div class="date-range">
-                                        <span>{{ booking.departure_date.strftime('%d.%m.%Y') }}</span>
-                                        <span class="time-badge">{{ booking.departure_date.strftime('%H:%M') }}</span>
-                                    </div>
+        {% if my_bookings %}
+        <div class="card table-responsive" style="padding: 0;">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="15%">Бронювання</th>
+                        <th width="30%">Період проживання</th>
+                        <th width="30%">Номери</th>
+                        <th width="15%">Статус</th>
+                        <th width="10%" style="text-align: right;">Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in my_bookings %}
+                    <tr id="booking-row-{{ booking.id }}">
+                        <td>
+                            <div class="booking-id">#{{ booking.id }}</div>
+                            <span class="meta-date" title="Дата створення">
+                                {{ booking.order_date.strftime('%d.%m.%y %H:%M') if booking.order_date else '-' }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <div class="date-range">
+                                    <span>{{ booking.arrival_date.strftime('%d.%m.%Y') }}</span>
+                                    <span class="time-badge">{{ booking.arrival_date.strftime('%H:%M') }}</span>
                                 </div>
-                            </td>
-
-                            <td>
-                                <div style="display: flex; flex-direction: column; gap: 4px;">
-                                    {% for pr in booking.physical_rooms %}
-                                        <span class="room-tag">
-                                            <strong>№ {{ pr.room_number }}</strong> <span style="color: #94a3b8;">|</span> {{ pr.room_model.type }}
-                                        </span>
-                                    {% else %}
-                                        {% for room in booking.rooms %}
-                                            <span class="room-tag">{{ room.type }}</span>
-                                        {% endfor %}
-                                    {% endfor %}
+                                <span class="date-arrow" style="margin-left: 4px;">↓ до</span>
+                                <div class="date-range">
+                                    <span>{{ booking.departure_date.strftime('%d.%m.%Y') }}</span>
+                                    <span class="time-badge">{{ booking.departure_date.strftime('%H:%M') }}</span>
                                 </div>
-                            </td>
+                            </div>
+                        </td>
 
-                            <td>
-                                <span class="status-badge" data-status="{{ booking.status }}">
-                                    {{ booking.status }}
+                        <td>
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                {% for pr in booking.physical_rooms %}
+                                <span class="room-tag">
+                                    <strong>№ {{ pr.room_number }}</strong> <span style="color: #94a3b8;">|</span> {{
+                                    pr.room_model.type }}
                                 </span>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="card" style="text-align: center; padding: 40px; color: var(--muted);">
-                <p>У вас ще немає бронювань.</p>
-                <a href="{{ HOTEL_SERVICE_URL }}/rooms" class="cta" style="margin-top: 10px;">Знайти номер</a>
-            </div>
-            {% endif %}
+                                {% else %}
+                                {% for room in booking.rooms %}
+                                <span class="room-tag">{{ room.type }}</span>
+                                {% endfor %}
+                                {% endfor %}
+                            </div>
+                        </td>
+
+                        <td>
+                            <span class="status-badge" data-status="{{ booking.status }}">
+                                {{ booking.status }}
+                            </span>
+                        </td>
+
+                        <td style="text-align: right;">
+                            {% if trust_level >= 1 and booking.status in ["Розглядається", "Підтверджено"] %}
+                            <form action="{{ HOTEL_SERVICE_URL }}/bookings/cancel/{{ booking.id }}" method="POST"
+                                onsubmit="return confirm('Ви впевнені, що хочете скасувати це бронювання? Це може вплинути на ваш рівень довіри.');">
+                                <button type="submit" class="btn-cancel">Скасувати</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="card" style="text-align: center; padding: 40px; color: var(--muted);">
+            <p>У вас ще немає бронювань.</p>
+            <a href="{{ HOTEL_SERVICE_URL }}/rooms" class="cta" style="margin-top: 10px;">Знайти номер</a>
+        </div>
+        {% endif %}
 
         {% else %}
-            <div class="card auth-cta-card">
-                <h2>Керуйте своїми бронюваннями</h2>
-                <p>Увійдіть до свого акаунту, щоб переглядати історію поїздок та статус бронювань.</p>
-                <div class="actions" style="justify-content: center;">
-                    <a class="cta-outline" href="{{ USER_SERVICE_URL }}/login">Увійти</a>
-                    <a class="cta" href="{{ USER_SERVICE_URL }}/registration">Створити акаунт</a>
-                </div>
+        <div class="card auth-cta-card">
+            <h2>Керуйте своїми бронюваннями</h2>
+            <p>Увійдіть до свого акаунту, щоб переглядати історію поїздок та статус бронювань.</p>
+            <div class="actions" style="justify-content: center;">
+                <a class="cta-outline" href="{{ USER_SERVICE_URL }}/login">Увійти</a>
+                <a class="cta" href="{{ USER_SERVICE_URL }}/registration">Створити акаунт</a>
             </div>
+        </div>
         {% endif %}
     </main>
 
@@ -232,31 +523,33 @@
         window.addEventListener("scroll", () => {
             const currentScroll = window.pageYOffset;
             if (currentScroll <= 0) { header.classList.remove("hide"); header.classList.add("show"); return; }
-            if (currentScroll > lastScroll && !header.classList.contains("hide")) { header.classList.remove("show"); header.classList.add("hide"); } 
+            if (currentScroll > lastScroll && !header.classList.contains("hide")) { header.classList.remove("show"); header.classList.add("hide"); }
             else if (currentScroll < lastScroll && header.classList.contains("hide")) { header.classList.remove("hide"); header.classList.add("show"); }
             lastScroll = currentScroll;
         });
 
         // Збереження гостьових ID
         document.addEventListener("DOMContentLoaded", () => {
-            const serverGuestBookings = {{ guest_booking_ids | tojson }};
-            if (serverGuestBookings && serverGuestBookings.length > 0) {
-                let storedBookings = JSON.parse(localStorage.getItem('guest_booking_ids') || '[]');
-                const combinedBookings = [...new Set([...storedBookings, ...serverGuestBookings])];
-                localStorage.setItem('guest_booking_ids', JSON.stringify(combinedBookings));
-            }
+            const serverGuestBookings = {{ guest_booking_ids | tojson
+        }};
+        if (serverGuestBookings && serverGuestBookings.length > 0) {
+            let storedBookings = JSON.parse(localStorage.getItem('guest_booking_ids') || '[]');
+            const combinedBookings = [...new Set([...storedBookings, ...serverGuestBookings])];
+            localStorage.setItem('guest_booking_ids', JSON.stringify(combinedBookings));
+        }
         });
     </script>
-    
+
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             {% if booking_error %}
-                setTimeout(() => { alert("{{ booking_error }}"); }, 100);
+            setTimeout(() => { alert("{{ booking_error }}"); }, 100);
             {% endif %}
             {% if success_message %}
-                setTimeout(() => { alert("{{ success_message }}"); }, 100);
+            setTimeout(() => { alert("{{ success_message }}"); }, 100);
             {% endif %}
         });
     </script>
 </body>
+
 </html>

@@ -25,8 +25,9 @@ class CreateBookingPayload(BaseModel):
     arrival_date: datetime
     departure_date: datetime
     phone_number: str
-    save_phone: Optional[bool] = False
-    book_without_confirmation: Optional[bool] = False
+    book_without_confirmation: bool = False
+    save_phone: bool = False
+    update_profile_phone: bool = False
 
 class UpdateBookingStatusPayload(BaseModel):
     status: str
@@ -150,6 +151,7 @@ async def cancel_booking(
         session["booking_success"] = message
 
     return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/my-bookings", status_code=status.HTTP_303_SEE_OTHER)
+
 @router.patch("/admin/bookings/{booking_id}/status")
 async def update_booking_status_by_admin(
     request: Request,  # <--- Додано об'єкт Request для доступу до сесії
@@ -349,16 +351,14 @@ async def create_booking_json(request: Request, payload: CreateBookingPayload, d
     if not booking_repository.are_rooms_available(db, payload.physical_room_ids, payload.arrival_date, payload.departure_date):
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
-            content={"success": False, "message": "На жаль, вибрані номери вже зайняті."}
+            content={"success": False, "message": "На жаль, вибрані номери вже зайняті на цей час. "}
         )
 
     # === ЗМІНА 1: ЛОГІКА СТАТУСУ ===
     # Якщо користувач просив не дзвонити, ставимо "Підтверджено" (або "Нове", залежно від вашої бізнес-логіки)
     # Важливо: бажано перевіряти trust_level ще раз тут, щоб хакери не слали book_without_confirmation вручну
     booking_status = "Розглядається" # Default (Pending)
-    
-    if user_id and payload.book_without_confirmation:
-         # Тут можна додати if user_trust_level >= 2:
+    if user_id and user_trust_level >=2 and payload.book_without_confirmation:
          booking_status = "Підтверджено" # Confirmed
 
     try:
@@ -374,9 +374,9 @@ async def create_booking_json(request: Request, payload: CreateBookingPayload, d
         
         # === ЗМІНА 2: ОНОВЛЕННЯ ТЕЛЕФОНУ ===
         # Якщо користувач залогінений І поставив галочку "Зберегти/Замінити телефон"
-        if user_id and payload.save_phone:
-            # Викликаємо фонову задачу або просто чекаємо (для простоти чекаємо)
-            await update_user_phone_service(user_id, payload.phone_number)
+        should_update_phone = payload.save_phone or payload.update_profile_phone
+        if user_id and should_update_phone:
+                await update_user_phone_service(user_id, payload.phone_number)
 
     except Exception as e:
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST, content={"success": False, "message": str(e)})
@@ -415,7 +415,14 @@ async def get_booking_confirmation_page(
     if not physical_room_ids or not arrival_date or not departure_date:
         return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/rooms", status_code=status.HTTP_303_SEE_OTHER)
     
-    # === НОВА ПЕРЕВІРКА: МІНІМУМ 24 ГОДИНИ ===
+    if arrival_date < datetime.now() + timedelta(minutes=80):
+        error_text = "Час прибуття має бути щонайменше на 1 годину 20 хвилин пізніше за поточний час."
+        encoded_error = urllib.parse.quote(error_text)
+        return RedirectResponse(
+            url=f"{HOTEL_SERVICE_URL}/rooms?error_message={encoded_error}", 
+            status_code=status.HTTP_303_SEE_OTHER
+        )
+    
     if (departure_date - arrival_date).total_seconds() < 86400:
         error_text = "Мінімальний часовий проміжок бронювання — 24 години (одна доба)."
         # Кодуємо текст для URL (щоб пробіли стали %20 і т.д.)
@@ -429,7 +436,7 @@ async def get_booking_confirmation_page(
     # =========================================
 
     if not booking_repository.are_rooms_available(db, physical_room_ids, arrival_date, departure_date):
-        error_text ="На жаль, вибрані номери вже зайняті."
+        error_text ="На жаль, вибрані номери вже зайняті на цей час. "
         encoded_error = urllib.parse.quote(error_text)
         return RedirectResponse(
             url=f"{HOTEL_SERVICE_URL}/rooms?error_message={encoded_error}", 
@@ -470,8 +477,7 @@ async def get_booking_confirmation_page(
         "is_authorized": is_authorized,
         "phone_number": user_phone or last_guest_phone,
         "trust_level": trust_level,
-        # "login_url": auth_urls["login_url"],
-        # "register_url": auth_urls["register_url"],
+        "guest_booking_ids": guest_booking_ids,
         "USER_SERVICE_URL": USER_SERVICE_URL,
         "HOTEL_SERVICE_URL": HOTEL_SERVICE_URL
     }

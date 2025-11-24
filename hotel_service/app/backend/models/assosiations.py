@@ -6,5 +6,5 @@ booking_room_association = Table(
     'booking_room_association',
     Base.metadata,
     Column('booking_id', Integer, ForeignKey('bookings.id'), primary_key=True),
-    Column('room_id', Integer, ForeignKey('rooms.id'), primary_key=True)
+    Column("physical_room_id", Integer, ForeignKey("physical_rooms.id"), primary_key=True)
 )
