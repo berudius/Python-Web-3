@@ -29,7 +29,6 @@
             color: #111;
         }
 
-        /* ---------------- HEADER ---------------- */
         header {
             position: fixed;
             top: 0;
@@ -50,21 +49,21 @@
             transform: translateY(0);
         }
 
-        /* -------------- CONTAINER IN HEADER -------------- */
+
         .container {
             max-width: 1100px;
             margin: 0 auto;
             padding: 0 20px;
         }
 
-        /* --------------- NAV WRAPPER --------------- */
+
         .nav {
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        /* ---------------- BRAND / LOGO ---------------- */
+
         .brand a {
             display: flex;
             align-items: center;
@@ -86,7 +85,7 @@
             font-size: 18px;
         }
 
-        /* ---------------- NAVIGATION MENU ---------------- */
+
         nav ul {
             display: flex;
             gap: 24px;
@@ -107,7 +106,7 @@
             color: var(--accent);
         }
 
-        /* ---------------- ACTION BUTTONS ---------------- */
+
         .actions {
             display: flex;
             gap: 12px;
@@ -168,11 +167,11 @@
         }
 
 
-        /* Новий клас, який додає відступ знизу */
+ 
         .h2-admin-margin {
             margin-bottom: 12px;
             margin-top: 24px;
-            /* Загальний стиль */
+
         }
 
         p {
@@ -180,7 +179,7 @@
             line-height: 1.6;
         }
 
-        /* --- Стилі для Форм (з login/reg) --- */
+
         .form-card {
             padding: 24px;
         }
@@ -201,7 +200,7 @@
         .form-card input[type="number"],
         .form-card input[type="file"],
         .form-card input[type="datetime-local"],
-        /* <-- ДОДАНО */
+
         .form-card textarea,
         .form-card select {
             width: 100%;
@@ -225,7 +224,7 @@
             font-size: 15px;
         }
 
-        /* --- Сітка Кімнат --- */
+
         .room-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -368,12 +367,6 @@
 
             position: relative;
             overflow: hidden;
-            /* ВАЖЛИВО: Встановлюємо співвідношення сторін 4:3 
-      (як у вашого placeholder 400x300).
-      Оскільки зображення тепер накладаються (position: absolute),
-      контейнер повинен мати чіткий розмір, інакше
-      його висота буде 0.
-    */
             aspect-ratio: 4 / 3;
         }
 
@@ -384,32 +377,29 @@
         }
 
         .room-slide-image {
-            /* display: none; */
-            /* <--- ВИДАЛЕНО */
 
             width: 100%;
             height: 100%;
-            /* <--- ЗМІНЕНО (було auto) */
             object-fit: cover;
 
-            /* Робимо перехід трохи довшим для "плавності" */
+
             transition: opacity 0.5s ease-in-out;
 
-            /* --- ДОДАНО --- */
+
             position: absolute;
             top: 0;
             left: 0;
             opacity: 0;
-            /* Ховаємо через прозорість */
+
             z-index: 1;
-            /* Базовий шар */
+
         }
 
         .room-slide-image.active {
             opacity: 1;
-            /* Робимо видимим */
+
             z-index: 2;
-            /* Перекриває неактивні слайди */
+           
         }
 
         .slider-btn {
@@ -426,12 +416,12 @@
             font-size: 1.2em;
             font-weight: bold;
 
-            /* Ховаємо кнопки за замовчуванням */
+     
             opacity: 0;
             transition: opacity 0.2s;
         }
 
-        /* Показуємо кнопки, коли курсор наводиться на ВСЮ КАРТКУ */
+    
         .room-card:hover .slider-btn {
             opacity: 1;
         }
@@ -495,7 +485,7 @@
             color: var(--muted);
         }
 
-        /* --- Кнопки Адміна --- */
+
         .admin-actions {
             border-top: 1px solid var(--border);
             padding: 12px 18px;
@@ -535,7 +525,7 @@
         }
 
 
-        /* --- Футер --- */
+
         footer {
             padding: 22px 24px;
             border-top: 1px solid var(--border);
@@ -567,13 +557,12 @@
             border-top: 1px solid var(--border);
         }
 
-        /* ДОДАНО: Стиль для самої кнопки */
+
         .cta-select-room {
             width: 100%;
             text-align: center;
         }
 
-        /* ДОДАНО: Стиль кнопки, коли картка обрана */
         .room-card.selected .cta-select-room {
             background: var(--accent);
             color: white;
@@ -586,10 +575,7 @@
             border-color: var(--accent-dark);
         }
 
-        /* ========================================
-           НОВІ СТИЛІ ДЛЯ ФІЛЬТРІВ
-           ========================================
-        */
+
         .filter-toggle-bar {
             display: flex;
             justify-content: flex-end;
@@ -604,7 +590,6 @@
         }
 
         #filter-container {
-            /* Ховаємо контейнер за замовчуванням */
             display: none;
         }
 
@@ -681,7 +666,6 @@
             border-radius: 4px;
             border: 1px solid #ccc;
             background-color: #e6fefe;
-            /* Колір вільного (світлий) */
             color: #0c4a49;
             cursor: default;
             transition: all 0.2s;
@@ -689,13 +673,12 @@
 
         .physical-room-unit.booked {
             background-color: #6c757d;
-            /* Колір зайнятого (темний) */
             border-color: #5a6268;
             color: white;
             text-decoration: line-through;
         }
 
-        /* Інфо про доступність для звичайного користувача */
+
         .availability-info {
             font-size: 0.9em;
             background-color: #f4f4f4;
@@ -705,7 +688,7 @@
         }
 
         .physical-room-unit {
-            /* Робимо схожим на кнопку */
+
             border: 1px solid #ccc;
             padding: 6px 10px;
             margin: 2px;
@@ -818,7 +801,7 @@
             transform: translateY(-1px);
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
             border-color: #2b7a78;
-            /* Твій акцентний колір */
+     
         }
 
         .cdp-input.active {
@@ -840,7 +823,7 @@
             border-radius: 6px;
         }
 
-        /* --- Стилізація Flatpickr під твій дизайн --- */
+
         .flatpickr-calendar {
             border-radius: 16px !important;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
@@ -891,7 +874,7 @@
 
         .toast-notification.show {
             top: 40px;
-            /* Ефект випадання */
+     
             opacity: 1;
             visibility: visible;
         }
@@ -1500,15 +1483,14 @@
                 container.append(createFacilityInput());
             }
 
-            // ===============================================
             // ЛОГІКА МОДАЛЬНИХ ВІКОН АДМІНКИ (ВИДАЛИТИ/РЕДАГУВАТИ)
-            // ===============================================
+
             const overlay = document.getElementById('modal-overlay');
             const deleteModal = document.getElementById('delete-modal');
             const editModal = document.getElementById('edit-modal');
             const deleteForm = document.getElementById('delete-form');
             const editForm = document.getElementById('edit-form');
-            const HOTEL_SERVICE_URL = '{{HOTEL_SERVICE_URL}}'; // Змінна з контексту
+            const HOTEL_SERVICE_URL = '{{HOTEL_SERVICE_URL}}'; 
 
             // Поля форми редагування
             const editType = document.getElementById('edit-type');
@@ -1587,10 +1569,6 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-
-            // ============================================================
-            // 0. ГАРАНТОВАНЕ СТВОРЕННЯ TOAST (ВИПРАВЛЕНО Z-INDEX)
-            // ============================================================
             if (!document.getElementById('error-toast')) {
                 const toastHTML = `
             <div id="error-toast" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #fff; border-left: 4px solid #e53e3e; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 16px 24px; border-radius: 12px; display: flex; align-items: center; gap: 12px; z-index: 999999; opacity: 0; visibility: hidden; transition: all 0.3s ease; min-width: 320px; font-family: system-ui, sans-serif;">
@@ -1636,9 +1614,6 @@
                 window.history.replaceState({}, document.title, newUrl);
             }
 
-            // ============================================================
-            // 1. ЗМІННІ ТА ЕЛЕМЕНТИ
-            // ============================================================
             const bookingCtaContainer = document.getElementById("booking-cta-container");
             const bookingCtaButton = document.getElementById("booking-cta-button");
             const HOTEL_SERVICE_URL = '{{HOTEL_SERVICE_URL}}';
@@ -1652,9 +1627,6 @@
             let currentBlockedIntervals = [];
             let debounceTimer = null; // Таймер для UX затримки
 
-            // ============================================================
-            // 2. ЛОГІКА
-            // ============================================================
 
             // Знаходить найближчий вільний час, якщо обраний зайнятий
             function getEarliestAvailableTime(targetDate) {
@@ -1691,7 +1663,6 @@
                 return false;
             }
 
-            // Оновлює текст у наших гарних інпутах
             function updatePickerDisplay(instance, dateStr, triggerElement) {
                 if (!triggerElement) return;
                 if (!dateStr || !instance.selectedDates[0]) {
@@ -1713,14 +1684,12 @@
                 triggerElement.classList.add('active');
             }
 
-            // ============================================================
-            // 3. ОБРОБКА ЗМІНИ ДАТИ (UX MAGIC)
-            // ============================================================
+            //  ОБРОБКА ЗМІНИ ДАТИ 
+ 
             const handleDateChange = (instance, isArrival) => {
                 const selectedDate = instance.selectedDates[0];
                 if (!selectedDate) return;
 
-                // --- 1. SMART AUTO-TIME (Миттєво) ---
                 // Якщо юзер вибрав день, а час за замовчуванням (12:00) зайнятий -> ставимо вільний
                 if (isDateTimeBlocked(selectedDate)) {
                     const smartTime = getEarliestAvailableTime(selectedDate);
@@ -1733,10 +1702,10 @@
                 const trigger = isArrival ? arrivalTrigger : departureTrigger;
                 updatePickerDisplay(instance, instance.input.value, trigger);
 
-                // --- 2. БЛОКУВАННЯ МАЙБУТНЬОГО (maxDate) ---
+                // БЛОКУВАННЯ МАЙБУТНіх дат для вибору
                 // Якщо це Заїзд -> обмежуємо Виїзд до наступного бронювання
                 if (isArrival && fpDeparture) {
-                    const minNextDay = new Date(currentValidDate.getTime() + 86400000); // +24h
+                    const minNextDay = new Date(currentValidDate.getTime() + 86400000);
                     fpDeparture.set('minDate', minNextDay);
 
                     // Шукаємо найближче бронювання ПІСЛЯ дати заїзду
@@ -1770,8 +1739,6 @@
                     }
                 }
 
-                // --- 3. DEBOUNCE ВАЛІДАЦІЯ (Затримка 1.5с) ---
-                // Даємо юзеру час докрутити хвилини, перш ніж показувати помилку
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
 
@@ -1800,9 +1767,7 @@
                 }, 1500);
             };
 
-            // ============================================================
             // 4. ІНІЦІАЛІЗАЦІЯ
-            // ============================================================
             const commonConfig = {
                 enableTime: true,
                 dateFormat: "Y-m-d H:i",
@@ -1811,7 +1776,7 @@
                 minDate: "today",
                 disableMobile: "true",
                 animate: true,
-                minuteIncrement: 1 // Дозволяємо будь-яку хвилину
+                minuteIncrement: 1
             };
 
             let fpArrival, fpDeparture;
@@ -1834,9 +1799,8 @@
                 departureTrigger.addEventListener('click', (e) => { e.preventDefault(); fpDeparture.open(); });
             }
 
-            // ============================================================
             // 5. ЗАВАНТАЖЕННЯ ЗАЙНЯТОСТІ
-            // ============================================================
+
             async function updateBlockedDates() {
                 const idsArray = [...selectedPhysicalRoomIds];
 
@@ -1897,9 +1861,7 @@
                 updateBlockedDates();
             };
 
-            // ============================================================
             // 6. ВІДПРАВКА
-            // ============================================================
             if (bookingCtaButton) {
                 bookingCtaButton.addEventListener("click", () => {
                     if (!fpArrival || !fpDeparture) return;
@@ -1936,7 +1898,7 @@
                 });
             }
 
-            // --- ІНІЦІАЛІЗАЦІЯ З ФІЛЬТРІВ ---
+            // ІНІЦІАЛІЗАЦІЯ З ФІЛЬТРІВ 
             const filterArrivalInput = document.querySelector('input[name="arrival_date"]');
             const filterDepartureInput = document.querySelector('input[name="departure_date"]');
             if (filterArrivalInput && filterArrivalInput.value && fpArrival) {
