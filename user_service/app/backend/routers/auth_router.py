@@ -221,10 +221,10 @@ async def update_user_details(
         )
         
     # 3. Виклик вашої функції репозиторію (вона працює чудово)
-    updated_user = update_user(db, user_id=user_id, update_data=update_data)
+    updated_user_ = update_user(db, user_id=user_id, update_data=update_data)
 
     # 4. Обробка результату
-    if updated_user is None:
+    if updated_user_ is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 
             detail="User not found"
@@ -234,11 +234,11 @@ async def update_user_details(
     # Тут ми формуємо відповідь вручну, або повертаємо об'єкт, 
     # якщо у вас налаштований response_model
     return {
-        "id": updated_user.id,
-        "login": updated_user.login,
-        "role": updated_user.role,
-        "phone_number": updated_user.phone_number,
-        "trust_level": updated_user.trust_level
+        "id": updated_user_.id,
+        "login": updated_user_.login,
+        "role": updated_user_.role,
+        "phone_number": updated_user_.phone_number,
+        "trust_level": updated_user_.trust_level
     }
 
 @router.get("/logout")
@@ -247,5 +247,6 @@ async def logout(request: Request):
     if session:
         deleteSession(sessionId=request.cookies.get("ssid"), sessionStorage=session_storage)
     return RedirectResponse(url=f"{USER_SERVICE_URL}/login")
+# any
 
 
