@@ -81,76 +81,6 @@ async def update_user_phone_service(user_id: int, new_phone: str):
     except Exception as e:
         print(f"Error calling User Service: {e}")
 
-@router.post("/bookings/cancel/{booking_id}")
-async def cancel_booking(
-    request: Request,
-    booking_id: int,
-    db: Session = Depends(get_db)
-):
-    session = getSession(request=request, sessionStorage=session_storage)
-    user_id = session.get("user_id") if session else None
-
-    if not user_id:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Для скасування бронювання потрібно увійти в акаунт.")
-
-    booking = booking_repository.get_booking_by_id(db, booking_id)
-
-    if not booking or booking.user_id != user_id:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Бронювання не знайдено або у вас немає прав на його скасування.")
-
-    if booking.status not in ["Розглядається", "Підтверджено"]:
-         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Неможливо скасувати бронювання зі статусом '{booking.status}'.")
-
-    user_data = await get_user_data_from_service(user_id)
-    if not user_data:
-        if session:
-            # ВИПРАВЛЕНО: замість .set() використовуємо []
-            session["booking_error"] = "Не вдалося отримати дані користувача. Спробуйте пізніше."
-        return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/my-bookings", status_code=status.HTTP_303_SEE_OTHER)
-
-    trust_level = user_data.get("trust_level", 0)
-    if trust_level == 0:
-        if session:
-            # ВИПРАВЛЕНО
-            session["booking_error"] = "Ваш рівень довіри не дозволяє скасовувати бронювання онлайн. Будь ласка, зв'яжіться з нами."
-        return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/my-bookings", status_code=status.HTTP_303_SEE_OTHER)
-
-    consecutive_cancellations = user_data.get("consecutive_cancellations", 0)
-    new_trust_level = trust_level
-    new_consecutive_cancellations = consecutive_cancellations + 1
-    update_payload = {"consecutive_cancellations": new_consecutive_cancellations}
-
-    if trust_level == 1:
-        new_trust_level = 0
-        update_payload["trust_level"] = new_trust_level
-        update_payload["consecutive_cancellations"] = 0
-    elif trust_level == 2 and new_consecutive_cancellations >= 2:
-        new_trust_level = 1
-        update_payload["trust_level"] = new_trust_level
-        update_payload["consecutive_cancellations"] = 0
-    elif trust_level == 3 and new_consecutive_cancellations >= 3:
-        new_trust_level = 1
-        update_payload["trust_level"] = new_trust_level
-        update_payload["consecutive_cancellations"] = 0
-
-    update_success = await update_user_data_in_service(user_id, update_payload)
-    if not update_success:
-        if session:
-            # ВИПРАВЛЕНО
-            session["booking_error"] = "Не вдалося оновити ваш рівень довіри. Спробуйте скасувати бронювання пізніше."
-        return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/my-bookings", status_code=status.HTTP_303_SEE_OTHER)
-
-    booking_repository.update_booking_status(db, booking_id, "Скасовано клієнтом")
-    
-    message = "Бронювання успішно скасовано."
-    if new_trust_level < trust_level:
-        message += f" Увага, ваш рівень довіри було знижено до {new_trust_level}."
-    
-    if session:
-        # ВИПРАВЛЕНО
-        session["booking_success"] = message
-
-    return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/my-bookings", status_code=status.HTTP_303_SEE_OTHER)
 
 @router.patch("/admin/bookings/{booking_id}/status")
 async def update_booking_status_by_admin(
@@ -237,58 +167,6 @@ async def update_booking_status_by_admin(
     return JSONResponse(content={"success": True, "message": "Статус оновлено. Рівень довіри без змін."})
 
 
-@router.get("/my-bookings")
-async def get_my_bookings_page(
-    request: Request,
-    db: Session = Depends(get_db),
-    # Фільтри більше не потрібні тут, але можна залишити, щоб не ламало старі посилання,
-    # або прибрати. Я залишу заглушки, щоб код не впав.
-    status_filter: Optional[str] = Query(None),
-    phone_filter: Optional[str] = Query(None)
-):
-    session = getSession(request=request, sessionStorage=session_storage)
-    
-    user_id = None
-    is_authorized = False
-    is_admin = False
-    guest_booking_ids = []
-    success_message = None
-    booking_error = None
-
-    if session:
-        user_id = session.get("user_id")
-        is_authorized = bool(user_id)
-        is_admin = session and session.get("user_role") == "admin"
-        guest_booking_ids = session.get("guest_booking_ids", [])
-        success_message = session.pop("booking_success", None)
-        booking_error = session.pop("booking_error", None)
-    
-    bookings = []
-    trust_level = 0
-
-    if is_authorized:
-        # ЗМІНА: Ми завжди беремо тільки власні бронювання, навіть якщо це адмін.
-        # Адмін бачить всіх користувачів тільки в /admin/panel
-        bookings = booking_repository.get_bookings_by_user_id(db, user_id)
-        
-        user_data = await get_user_data_from_service(user_id)
-        if user_data:
-            trust_level = user_data.get("trust_level", 0)
-
-    context = {
-        "request": request,
-        "my_bookings": bookings,
-        "is_authorized": is_authorized,
-        "is_admin": is_admin,
-        "trust_level": trust_level,
-        "success_message": success_message, 
-        "booking_error": booking_error,      
-        "guest_booking_ids": guest_booking_ids,
-        "USER_SERVICE_URL": USER_SERVICE_URL,
-        "HOTEL_SERVICE_URL": HOTEL_SERVICE_URL
-    }
-    return templates.TemplateResponse("my-bookings.html", context)
-
 
 @router.get("/auth/sync")
 async def sync_guest_bookings(
@@ -316,7 +194,7 @@ async def sync_guest_bookings(
     # Додано перевірку session перед .pop()
     if session:
         session.pop("guest_booking_ids", None)
-    return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/my-bookings", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/", status_code=status.HTTP_303_SEE_OTHER)
 
 @router.post("/bookings/create_json")
 async def create_booking_json(request: Request, payload: CreateBookingPayload, db: Session = Depends(get_db)):

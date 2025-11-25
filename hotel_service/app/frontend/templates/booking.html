@@ -299,7 +299,6 @@
                 <ul>
                     <li><a href="{{ HOTEL_SERVICE_URL }}/rooms">Номери</a></li>
                     <li><a href="{{ HOTEL_SERVICE_URL }}/services">Сервіси</a></li>
-                    <li><a href="{{ HOTEL_SERVICE_URL }}/my-bookings">Мої бронювання</a></li>
                     {% if is_admin %}
                     <li><a href="{{ HOTEL_SERVICE_URL }}/admin/panel">Адмін панель</a></li>
                     {% endif %}
@@ -564,7 +563,7 @@
                     localStorage.removeItem('selected_physical_rooms');
                     localStorage.removeItem('arrival_date');
                     localStorage.removeItem('departure_date');
-                    window.location.href = '{{HOTEL_SERVICE_URL}}/my-bookings';
+                    window.location.href = '{{HOTEL_SERVICE_URL}}/rooms';
                 } else {
                     alert('Помилка бронювання: ' + result.message);
                 }
