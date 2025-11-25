@@ -36,7 +36,7 @@ def are_rooms_available(db: Session, physical_room_ids: List[int], arrival_date:
 def add_booking(
     db: Session, 
     phone_number: str,
-    physical_room_ids: List[int], # Змінено назву аргументу для ясності
+    physical_room_ids: List[int],
     arrival_date: date, 
     departure_date: date,
     status: str,
