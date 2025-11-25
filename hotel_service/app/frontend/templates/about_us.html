@@ -26,7 +26,7 @@
             color: #111;
         }
 
-        /* ---------------- HEADER ---------------- */
+        /* HEADER  */
         header { position: fixed; top: 0; left: 0; width: 100%; padding: 16px 24px; background: white; border-bottom: 1px solid var(--border); z-index: 50; transition: transform 0.3s ease; }
         header.hide { transform: translateY(-100%); }
         header.show { transform: translateY(0); }
@@ -48,12 +48,10 @@
         .cta-outline:hover { border-color: var(--accent); color: var(--accent); }
 
 
-        /* ---------- MAIN & OTHER STYLES ---------- */
         main {
             padding: 100px 24px 34px 24px;
         }
 
-        /* ЗМІНЕНО: Основний контейнер тепер вужчий (700px замість 1000px) */
         .container {
             max-width: 1000px;
             margin: 0 auto;
@@ -159,7 +157,6 @@
             border: 1px solid #f0f4f6;
         }
 
-        /* --- Form Styles --- */
         .form-wrapper {
             max-width: 450px;
             margin: 0 auto;
@@ -294,7 +291,6 @@
     </header>
 
     <main>
-        <!-- Цей div.container тепер має max-width: 700px -->
         <div class="container">
             <section class="title-card">
                 <h1>Edemium — простий спосіб забронювати відпочинок</h1>
@@ -375,7 +371,7 @@
     </footer>
 
     <script>
-        // Скрипт для випадаючих контактів (Акордеон)
+        // Скрипт для випадаючих контактів
         const toggle = document.getElementById('contactToggle');
         const body = document.getElementById('contactBody');
 
@@ -384,12 +380,10 @@
             toggle.setAttribute('aria-expanded', String(!expanded));
 
             if (!expanded) {
-                // РОЗКРИТИ: додаємо клас
                 body.classList.add('show-body');
                 body.setAttribute('aria-hidden', 'false');
                 toggle.querySelector('span').textContent = '▴';
             } else {
-                // ЗГОРНУТИ: прибираємо клас
                 body.classList.remove('show-body');
                 body.setAttribute('aria-hidden', 'true');
                 toggle.querySelector('span').textContent = '▾';
