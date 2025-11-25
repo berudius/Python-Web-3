@@ -38,7 +38,6 @@ def update_user(db: Session, user_id: int, update_data: Dict[str, Any]) -> Optio
     user = db.query(User).filter(User.id == user_id).first()
     
     if user:
-        # Динамічно оновлюємо поля
         for key, value in update_data.items():
             if hasattr(user, key):
                 setattr(user, key, value)
