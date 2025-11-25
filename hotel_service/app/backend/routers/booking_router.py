@@ -72,7 +72,6 @@ async def update_user_phone_service(user_id: int, new_phone: str):
     
     try:
         async with AsyncClient() as client:
-            # Використовуємо PATCH, який ви вже реалізували в User Service
             resp = await client.patch(url, json=payload)
             if resp.status_code == 200:
                 print(f"User {user_id} phone updated to {new_phone}")
@@ -104,14 +103,12 @@ async def cancel_booking(
     user_data = await get_user_data_from_service(user_id)
     if not user_data:
         if session:
-            # ВИПРАВЛЕНО: замість .set() використовуємо []
             session["booking_error"] = "Не вдалося отримати дані користувача. Спробуйте пізніше."
         return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/my-bookings", status_code=status.HTTP_303_SEE_OTHER)
 
     trust_level = user_data.get("trust_level", 0)
     if trust_level == 0:
         if session:
-            # ВИПРАВЛЕНО
             session["booking_error"] = "Ваш рівень довіри не дозволяє скасовувати бронювання онлайн. Будь ласка, зв'яжіться з нами."
         return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/my-bookings", status_code=status.HTTP_303_SEE_OTHER)
 
@@ -136,7 +133,6 @@ async def cancel_booking(
     update_success = await update_user_data_in_service(user_id, update_payload)
     if not update_success:
         if session:
-            # ВИПРАВЛЕНО
             session["booking_error"] = "Не вдалося оновити ваш рівень довіри. Спробуйте скасувати бронювання пізніше."
         return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/my-bookings", status_code=status.HTTP_303_SEE_OTHER)
 
@@ -147,7 +143,6 @@ async def cancel_booking(
         message += f" Увага, ваш рівень довіри було знижено до {new_trust_level}."
     
     if session:
-        # ВИПРАВЛЕНО
         session["booking_success"] = message
 
     return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/my-bookings", status_code=status.HTTP_303_SEE_OTHER)
@@ -159,7 +154,7 @@ async def update_booking_status_by_admin(
     payload: UpdateBookingStatusPayload,
     db: Session = Depends(get_db)
 ):
-    # === 1. ПЕРЕВІРКА БЕЗПЕКИ (SECURITY CHECK) ===
+    # ПЕРЕВІРКА БЕЗПЕКИ
     session = getSession(request, sessionStorage=session_storage)
     
     # Якщо сесії немає АБО роль не адмін -> Помилка 403
@@ -169,7 +164,7 @@ async def update_booking_status_by_admin(
             detail="Доступ заборонено. Потрібні права адміністратора."
         )
 
-    # === 2. ОТРИМАННЯ БРОНЮВАННЯ ===
+    # ОТРИМАННЯ БРОНЮВАННЯ
     booking_to_update = booking_repository.get_booking_by_id(db, booking_id)
     if not booking_to_update:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Бронювання не знайдено.")
@@ -185,7 +180,7 @@ async def update_booking_status_by_admin(
     if not user_id or payload.status != "Завершено" or old_status == "Завершено":
         return JSONResponse(content={"success": True, "message": "Статус оновлено."})
 
-    # === 3. ЛОГІКА ДОВІРИ (GAMIFICATION) ===
+    # ЛОГІКА ДОВІРИ (GAMIFICATION)
     
     user_data = await get_user_data_from_service(user_id)
     if not user_data:
@@ -201,7 +196,7 @@ async def update_booking_status_by_admin(
     
     completed_count = booking_repository.count_bookings_by_status(db, user_id, "Завершено")
 
-    # Розрахунок потенціалу (на що заслуговує історія)
+    # Розрахунок потенціалу (на що заслуговує (на основі історії бронювань користувача))
     potential_level = 0
     if completed_count >= 10: potential_level = 3
     elif completed_count >= 5: potential_level = 2
@@ -222,7 +217,7 @@ async def update_booking_status_by_admin(
             new_level = current_trust_level + 1
             updates["trust_level"] = new_level
 
-    # === 4. ВІДПРАВКА ОНОВЛЕНЬ ===
+    #  ВІДПРАВКА ОНОВЛЕНЬ
     if updates:
         await update_user_data_in_service(user_id, updates)
         
@@ -241,8 +236,6 @@ async def update_booking_status_by_admin(
 async def get_my_bookings_page(
     request: Request,
     db: Session = Depends(get_db),
-    # Фільтри більше не потрібні тут, але можна залишити, щоб не ламало старі посилання,
-    # або прибрати. Я залишу заглушки, щоб код не впав.
     status_filter: Optional[str] = Query(None),
     phone_filter: Optional[str] = Query(None)
 ):
@@ -267,8 +260,6 @@ async def get_my_bookings_page(
     trust_level = 0
 
     if is_authorized:
-        # ЗМІНА: Ми завжди беремо тільки власні бронювання, навіть якщо це адмін.
-        # Адмін бачить всіх користувачів тільки в /admin/panel
         bookings = booking_repository.get_bookings_by_user_id(db, user_id)
         
         user_data = await get_user_data_from_service(user_id)
@@ -307,13 +298,11 @@ async def sync_guest_bookings(
             booking_ids_to_sync = [int(id_str) for id_str in guest_bookings.split(',')]
             updated_count = booking_repository.associate_bookings_to_user_by_ids(db, booking_ids_to_sync, user_id)
             if updated_count > 0:
-                # Додано перевірку session перед .set()
                 if session:
                     session.set("booking_success", f"Ваші гостьові бронювання (кількість: {updated_count}) було успішно прив\'язано до акаунту.")
         except (ValueError, TypeError):
             pass
     
-    # Додано перевірку session перед .pop()
     if session:
         session.pop("guest_booking_ids", None)
     return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/my-bookings", status_code=status.HTTP_303_SEE_OTHER)
@@ -332,9 +321,7 @@ async def create_booking_json(request: Request, payload: CreateBookingPayload, d
         if not user_id:
             guest_bookings = session.get("guest_booking_ids", [])
 
-    # === ВАЛІДАЦІЯ ДАТ ===
-    print(f"HERE arrival_date: {payload.arrival_date}")
-    print(f"HERE departure_date: {payload.departure_date}")
+    # ВАЛІДАЦІЯ ДАТ
     if payload.arrival_date < datetime.now() + timedelta(minutes=80):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -347,16 +334,15 @@ async def create_booking_json(request: Request, payload: CreateBookingPayload, d
             content={"success": False, "message": "Мінімальний термін — 24 години."}
         )
 
-    # === ПЕРЕВІРКА ДОСТУПНОСТІ ===
+    # ПЕРЕВІРКА ДОСТУПНОСТІ
     if not booking_repository.are_rooms_available(db, payload.physical_room_ids, payload.arrival_date, payload.departure_date):
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
             content={"success": False, "message": "На жаль, вибрані номери вже зайняті на цей час. "}
         )
 
-    # === ЗМІНА 1: ЛОГІКА СТАТУСУ ===
-    # Якщо користувач просив не дзвонити, ставимо "Підтверджено" (або "Нове", залежно від вашої бізнес-логіки)
-    # Важливо: бажано перевіряти trust_level ще раз тут, щоб хакери не слали book_without_confirmation вручну
+    #  ЛОГІКА СТАТУСУ 
+    # Якщо користувач просив не дзвонити, ставимо "Підтверджено" 
     booking_status = "Розглядається" # Default (Pending)
     if user_id and user_trust_level >=2 and payload.book_without_confirmation:
          booking_status = "Підтверджено" # Confirmed
@@ -372,7 +358,7 @@ async def create_booking_json(request: Request, payload: CreateBookingPayload, d
             user_id=user_id
         )
         
-        # === ЗМІНА 2: ОНОВЛЕННЯ ТЕЛЕФОНУ ===
+        # ОНОВЛЕННЯ ТЕЛЕФОНУ
         # Якщо користувач залогінений І поставив галочку "Зберегти/Замінити телефон"
         should_update_phone = payload.save_phone or payload.update_profile_phone
         if user_id and should_update_phone:
@@ -387,7 +373,7 @@ async def create_booking_json(request: Request, payload: CreateBookingPayload, d
 
     response = JSONResponse(content={"success": True, "message": message})
 
-    # === ЛОГІКА ДЛЯ ГОСТЕЙ (Сесія) ===
+    # ЛОГІКА ДЛЯ ГОСТЕЙ
     if not user_id:
         if new_booking.id not in guest_bookings:
             guest_bookings.append(new_booking.id)
@@ -404,7 +390,6 @@ async def create_booking_json(request: Request, payload: CreateBookingPayload, d
 async def get_booking_confirmation_page(
     request: Request,
     db: Session = Depends(get_db),
-    # ЗМІНА 4: Очікуємо параметр ?physical_room_ids=1&physical_room_ids=2
     physical_room_ids: Optional[List[int]] = Query(None), 
     arrival_date: Optional[datetime] = Query(None),
     departure_date: Optional[datetime] = Query(None)
@@ -428,7 +413,6 @@ async def get_booking_confirmation_page(
         # Кодуємо текст для URL (щоб пробіли стали %20 і т.д.)
         encoded_error = urllib.parse.quote(error_text)
         
-        # Передаємо помилку прямо в URL
         return RedirectResponse(
             url=f"{HOTEL_SERVICE_URL}/rooms?error_message={encoded_error}", 
             status_code=status.HTTP_303_SEE_OTHER
@@ -494,7 +478,6 @@ async def set_booking_owner(
     if not payload.booking_ids:
         return JSONResponse(content={"success": False, "message": "Список бронювань порожній"})
 
-    # Викликаємо створений вами метод репозиторію
     count = booking_repository.update_bookings_with_user_id(
         db, 
         payload.booking_ids, 
