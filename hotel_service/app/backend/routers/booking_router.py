@@ -32,7 +32,7 @@ class CreateBookingPayload(BaseModel):
 class UpdateBookingStatusPayload(BaseModel):
     status: str
 
-# Модель даних, які прийдуть від Auth Service
+# Модель даних, які прийдуть від user_service
 class LinkUserPayload(BaseModel):
     user_id: int
     booking_ids: List[int]
@@ -72,7 +72,7 @@ async def update_user_phone_service(user_id: int, new_phone: str):
     
     try:
         async with AsyncClient() as client:
-            # Використовуємо PATCH, який ви вже реалізували в User Service
+            # Використовуємо PATCH, який вже реалізували в user service
             resp = await client.patch(url, json=payload)
             if resp.status_code == 200:
                 print(f"User {user_id} phone updated to {new_phone}")
@@ -84,12 +84,12 @@ async def update_user_phone_service(user_id: int, new_phone: str):
 
 @router.patch("/admin/bookings/{booking_id}/status")
 async def update_booking_status_by_admin(
-    request: Request,  # <--- Додано об'єкт Request для доступу до сесії
+    request: Request, 
     booking_id: int,
     payload: UpdateBookingStatusPayload,
     db: Session = Depends(get_db)
 ):
-    # === 1. ПЕРЕВІРКА БЕЗПЕКИ (SECURITY CHECK) ===
+    #  ПЕРЕВІРКА БЕЗПЕКИ 
     session = getSession(request, sessionStorage=session_storage)
     
     # Якщо сесії немає АБО роль не адмін -> Помилка 403
@@ -99,7 +99,7 @@ async def update_booking_status_by_admin(
             detail="Доступ заборонено. Потрібні права адміністратора."
         )
 
-    # === 2. ОТРИМАННЯ БРОНЮВАННЯ ===
+    #  ОТРИМАННЯ БРОНЮВАННЯ
     booking_to_update = booking_repository.get_booking_by_id(db, booking_id)
     if not booking_to_update:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Бронювання не знайдено.")
@@ -115,7 +115,7 @@ async def update_booking_status_by_admin(
     if not user_id or payload.status != "Завершено" or old_status == "Завершено":
         return JSONResponse(content={"success": True, "message": "Статус оновлено."})
 
-    # === 3. ЛОГІКА ДОВІРИ (GAMIFICATION) ===
+    #ЛОГІКА ДОВІРИ (GAMIFICATION)
     
     user_data = await get_user_data_from_service(user_id)
     if not user_data:
@@ -131,7 +131,7 @@ async def update_booking_status_by_admin(
     
     completed_count = booking_repository.count_bookings_by_status(db, user_id, "Завершено")
 
-    # Розрахунок потенціалу (на що заслуговує історія)
+    # Розрахунок потенціалу (на що заслуговує історія бронювань користувача)
     potential_level = 0
     if completed_count >= 10: potential_level = 3
     elif completed_count >= 5: potential_level = 2
@@ -152,7 +152,7 @@ async def update_booking_status_by_admin(
             new_level = current_trust_level + 1
             updates["trust_level"] = new_level
 
-    # === 4. ВІДПРАВКА ОНОВЛЕНЬ ===
+    # 4. ВІДПРАВКА ОНОВЛЕНЬ
     if updates:
         await update_user_data_in_service(user_id, updates)
         
@@ -191,7 +191,6 @@ async def sync_guest_bookings(
         except (ValueError, TypeError):
             pass
     
-    # Додано перевірку session перед .pop()
     if session:
         session.pop("guest_booking_ids", None)
     return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/", status_code=status.HTTP_303_SEE_OTHER)
@@ -204,15 +203,12 @@ async def create_booking_json(request: Request, payload: CreateBookingPayload, d
 
     if session:
         user_id = session.get("user_id")
-        # Додаткова перевірка рівня довіри із сесії для безпеки
         user_trust_level = session.get("trust_level", 0)
         
         if not user_id:
             guest_bookings = session.get("guest_booking_ids", [])
 
-    # === ВАЛІДАЦІЯ ДАТ ===
-    print(f"HERE arrival_date: {payload.arrival_date}")
-    print(f"HERE departure_date: {payload.departure_date}")
+    # ВАЛІДАЦІЯ ДАТ
     if payload.arrival_date < datetime.now() + timedelta(minutes=80):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -225,19 +221,18 @@ async def create_booking_json(request: Request, payload: CreateBookingPayload, d
             content={"success": False, "message": "Мінімальний термін — 24 години."}
         )
 
-    # === ПЕРЕВІРКА ДОСТУПНОСТІ ===
+    #ПЕРЕВІРКА ДОСТУПНОСТІ
     if not booking_repository.are_rooms_available(db, payload.physical_room_ids, payload.arrival_date, payload.departure_date):
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
             content={"success": False, "message": "На жаль, вибрані номери вже зайняті на цей час. "}
         )
 
-    # === ЗМІНА 1: ЛОГІКА СТАТУСУ ===
-    # Якщо користувач просив не дзвонити, ставимо "Підтверджено" (або "Нове", залежно від вашої бізнес-логіки)
-    # Важливо: бажано перевіряти trust_level ще раз тут, щоб хакери не слали book_without_confirmation вручну
-    booking_status = "Розглядається" # Default (Pending)
+    # ЛОГІКА СТАТУСУ 
+    # Якщо користувач просив не дзвонити, ставимо "Підтверджено"
+    booking_status = "Розглядається" # Default
     if user_id and user_trust_level >=2 and payload.book_without_confirmation:
-         booking_status = "Підтверджено" # Confirmed
+         booking_status = "Підтверджено"
 
     try:
         new_booking = booking_repository.add_booking(
@@ -250,7 +245,7 @@ async def create_booking_json(request: Request, payload: CreateBookingPayload, d
             user_id=user_id
         )
         
-        # === ЗМІНА 2: ОНОВЛЕННЯ ТЕЛЕФОНУ ===
+        #  ОНОВЛЕННЯ ТЕЛЕФОНУ
         # Якщо користувач залогінений І поставив галочку "Зберегти/Замінити телефон"
         should_update_phone = payload.save_phone or payload.update_profile_phone
         if user_id and should_update_phone:
@@ -265,7 +260,7 @@ async def create_booking_json(request: Request, payload: CreateBookingPayload, d
 
     response = JSONResponse(content={"success": True, "message": message})
 
-    # === ЛОГІКА ДЛЯ ГОСТЕЙ (Сесія) ===
+    # ЛОГІКА ДЛЯ ГОСТЕЙ (створюємо гостьову сесію) 
     if not user_id:
         if new_booking.id not in guest_bookings:
             guest_bookings.append(new_booking.id)
@@ -346,7 +341,7 @@ async def get_booking_confirmation_page(
     context = {
         "request": request,
         "selected_rooms": selected_physical_rooms,
-        "physical_room_ids": physical_room_ids, # ЗМІНА 5: Передаємо правильну назву в шаблон
+        "physical_room_ids": physical_room_ids, 
         "arrival_date": arrival_date,     
         "departure_date": departure_date,
         "total_price": full_price,
