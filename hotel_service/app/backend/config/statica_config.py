@@ -4,7 +4,7 @@ import os
 Знаходить шлях до папки static та монтує її до FastAPI app.
 """
 
-# 1. Отримуємо шлях до папки 'config' (де знаходиться ЦЕЙ файл)
+# 1. Отримуємо шлях до папки 'config'
 #    .../hotel_service/app/config
 config_dir = os.path.dirname(os.path.abspath(__file__))
 
