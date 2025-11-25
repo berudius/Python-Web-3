@@ -25,7 +25,7 @@ def are_rooms_available(db: Session, physical_room_ids: List[int], arrival_date:
         .join(Booking.physical_rooms)\
         .filter(
             and_(
-                PhysicalRoom.id.in_(physical_room_ids), # Перевіряємо ID фізичних номерів
+                PhysicalRoom.id.in_(physical_room_ids),
                 Booking.status.in_(["Підтверджено", "Розглядається"]),
                 Booking.arrival_date < departure_date,
                 Booking.departure_date > arrival_date
@@ -36,7 +36,7 @@ def are_rooms_available(db: Session, physical_room_ids: List[int], arrival_date:
 def add_booking(
     db: Session, 
     phone_number: str,
-    physical_room_ids: List[int], # Змінено назву аргументу для ясності
+    physical_room_ids: List[int], 
     arrival_date: date, 
     departure_date: date,
     status: str,
@@ -159,6 +159,10 @@ def associate_bookings_to_user_by_ids(db: Session, booking_ids: List[int], user_
     updated_count = query.update({"user_id": user_id}, synchronize_session=False)
     db.commit()
     return updated_count
+# Обидві масово оновлюють user_id у Booking.
+
+# Але associate_bookings_to_user_by_ids більш обережна, оновлює тільки “гостьові” бронювання,
+# тоді як update_bookings_with_user_id оновлює всі вказані, навіть якщо вони вже прив’язані до іншого користувача.
 
 def update_bookings_with_user_id(db: Session, booking_ids: List[int], user_id: int) -> int:
     """
