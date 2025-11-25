@@ -25,7 +25,6 @@
             color: #111;
         }
 
-        /* --- Header --- */
         header { position: fixed; top: 0; left: 0; width: 100%; padding: 16px 24px; background: white; border-bottom: 1px solid var(--border); z-index: 50; transition: transform 0.3s ease; }
         header.hide { transform: translateY(-100%); }
         header.show { transform: translateY(0); }
@@ -72,7 +71,6 @@
             font-size: 15px;
         }
 
-        /* --- Виправлені Checkboxes --- */
         .checkbox-group {
             display: flex;
             align-items: flex-start;
@@ -100,7 +98,6 @@
             color: #334155;
         }
 
-        /* --- Summary Section --- */
         .booking-summary {
             background-color: #f8fafc;
             border: 1px solid var(--border);
@@ -130,7 +127,6 @@
         .price-row { display: flex; justify-content: space-between; margin-top: 8px; font-size: 14px; }
         .total-row { display: flex; justify-content: space-between; margin-top: 16px; padding-top: 16px; border-top: 2px solid #cbd5e1; font-size: 18px; font-weight: 700; color: var(--accent); }
 
-        /* --- Rules Section --- */
         .terms-box {
             background-color: #fff5f5;
             border: 1px solid #fed7d7;
@@ -143,7 +139,6 @@
         .terms-box h4 { margin: 0 0 8px 0; color: #c53030; display: flex; gap: 8px; align-items: center; }
         .terms-list { margin: 0; padding-left: 20px; line-height: 1.5; }
 
-        /* --- Стилі для телефону --- */
         .saved-phone-display {
             background: #f1f5f9;
             padding: 12px;
@@ -172,7 +167,6 @@
             margin-bottom: 16px;
         }
 
-        /* --- VIP Section (Trust Level) --- */
         .trust-section {
             background-color: #f0fdf4;
             border: 1px solid #bbf7d0;
@@ -200,7 +194,6 @@
             text-transform: uppercase;
         }
 
-        /* --- Виправлений Tooltip --- */
         .tooltip-container {
             position: relative;
             display: inline-flex;
@@ -531,7 +524,6 @@
                 shouldSavePhone = formData.get('save_phone') === 'on';
             }
 
-            // --- Логіка VIP "Без дзвінка" ---
             const noCallbackCheckbox = document.getElementById('no_callback');
             const bookWithoutConfirmation = noCallbackCheckbox ? noCallbackCheckbox.checked : false;
 
