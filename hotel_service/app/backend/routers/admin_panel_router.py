@@ -10,8 +10,6 @@ from fastapi_redis_session import getSession
 from ..config.jinja_template_config import templates
 from common.config.services_paths import HOTEL_SERVICE_URL, USER_SERVICE_URL
 from ..repositories import booking_repository
-
-# Імпортуємо вашу функцію оновлення даних юзера, яку ми писали раніше
 from .booking_router import update_user_data_in_service, get_user_data_from_service
 
 router = APIRouter()
@@ -43,8 +41,7 @@ async def admin_panel(
 
     success_message = session.pop("admin_success", None)
     
-    # --- ЗМІНА ТУТ ---
-    # Замість get_all_bookings викликаємо функцію з фільтрами
+    # викликаємо функцію з фільтрами
     # Передаємо значення, отримані з URL
     all_bookings = booking_repository.get_all_bookings_with_filters(
         db, 
@@ -63,7 +60,6 @@ async def admin_panel(
         "success_message": success_message,
         "HOTEL_SERVICE_URL": HOTEL_SERVICE_URL,
         "USER_SERVICE_URL": USER_SERVICE_URL,
-        # Передаємо поточні фільтри назад у шаблон, щоб вони не зникали після кліку "Знайти"
         "current_status": status_filter,
         "current_phone": phone_filter
     }
