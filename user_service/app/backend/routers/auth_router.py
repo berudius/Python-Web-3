@@ -247,5 +247,6 @@ async def logout(request: Request):
     if session:
         deleteSession(sessionId=request.cookies.get("ssid"), sessionStorage=session_storage)
     return RedirectResponse(url=f"{USER_SERVICE_URL}/login")
+# any
 
 
