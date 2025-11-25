@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+redis
+fastapi-redis-session
+jinja2
+python-multipart
+httpx
+pydantic
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
