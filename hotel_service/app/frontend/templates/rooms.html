@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
+    <title>Наші номери - Edemium</title>
+    <style>
+        :root {
+            --accent: #2b7a78;
+            --accent-dark: #1f5f5d;
+            --muted: #6b7280;
+            --bg: #f7fafc;
+            --card: #ffffff;
+            --border: #e6eef0;
+            --danger: #e53e3e;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            margin: 0;
+            background: var(--bg);
+            color: #111;
+        }
+
+        /* ---------------- HEADER ---------------- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 16px 24px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            z-index: 50;
+            transition: transform 0.3s ease;
+        }
+
+        header.hide {
+            transform: translateY(-100%);
+        }
+
+        header.show {
+            transform: translateY(0);
+        }
+
+        /* -------------- CONTAINER IN HEADER -------------- */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* --------------- NAV WRAPPER --------------- */
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* ---------------- BRAND / LOGO ---------------- */
+        .brand a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #0f172a;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* ---------------- NAVIGATION MENU ---------------- */
+        nav ul {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav li a {
+            font-size: 14px;
+            color: var(--muted);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        nav li a:hover {
+            color: var(--accent);
+        }
+
+        /* ---------------- ACTION BUTTONS ---------------- */
+        .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .cta,
+        .cta-outline {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .cta {
+            background: var(--accent);
+            color: white;
+        }
+
+        .cta:hover {
+            background: var(--accent-dark);
+        }
+
+        .cta-outline {
+            border: 1px solid var(--border);
+            color: #0f172a;
+            background: white;
+        }
+
+        .cta-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+
+        main {
+            padding: 34px 24px;
+            margin-top: 60px;
+            /* Замість 80px, щоб бути ближче до хедера */
+        }
+
+        .card {
+            background: var(--card);
+            padding: 18px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(16, 24, 40, 0.04);
+            margin-bottom: 18px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin: 0 0 10px;
+            font-weight: 700;
+        }
+
+
+        /* Новий клас, який додає відступ знизу */
+        .h2-admin-margin {
+            margin-bottom: 12px;
+            margin-top: 24px;
+            /* Загальний стиль */
+        }
+
+        p {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* --- Стилі для Форм (з login/reg) --- */
+        .form-card {
+            padding: 24px;
+        }
+
+        .spacer {
+            margin-top: 110px;
+        }
+
+        .form-card label {
+            display: block;
+            margin-bottom: 12px;
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-card input[type="text"],
+        .form-card input[type="number"],
+        .form-card input[type="file"],
+        .form-card input[type="datetime-local"],
+        /* <-- ДОДАНО */
+        .form-card textarea,
+        .form-card select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-top: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-card textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-card button[type="submit"] {
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 15px;
+        }
+
+        /* --- Сітка Кімнат --- */
+        .room-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 18px;
+        }
+
+        .room-card {
+            position: relative;
+            padding: 0;
+            overflow: hidden;
+
+            transition: box-shadow 0.2s, border-color 0.2s;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .room-card.selected {
+            border-color: #2b7a78;
+            box-shadow: 0 0 0 3px #2b7a78, 0 4px 12px rgba(43, 122, 120, 0.4);
+        }
+
+        .selection-indicator {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            /* Позиціонуємо зліва, щоб не заважати кнопкам слайдера */
+            z-index: 20;
+            /* Має бути вище за все, крім кнопок адміна */
+
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Напівпрозорий фон */
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            /* Біла рамка */
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+
+            /* Ховаємо за замовчуванням */
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        /* 1. Показуємо при наведенні на картку */
+        .room-card:hover .selection-indicator {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* 2. Тримаємо видимим, якщо картка вже обрана */
+        .room-card.selected .selection-indicator {
+            opacity: 1;
+            transform: scale(1);
+            background-color: #2b7a78;
+            /* Колір вашої теми */
+            border-color: #2b7a78;
+        }
+
+        /* Стилі для "галочки" (SVG) */
+        .selection-checkmark {
+            width: 14px;
+            height: 14px;
+            opacity: 0;
+            /* Ховаємо галочку за замовчуванням */
+            transition: opacity 0.2s;
+        }
+
+        /* 3. Показуємо галочку, коли картка обрана */
+        .room-card.selected .selection-checkmark {
+            opacity: 1;
+        }
+
+        .booking-cta-container {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+
+            /* Робимо панелька схожою на картку */
+            background: white;
+            padding: 10px 16px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border: 1px solid #e2e8f0;
+
+            transition: opacity 0.3s, transform 0.3s;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .booking-bar-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            /* Щоб на мобільному переносилось */
+        }
+
+        .booking-dates {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .booking-dates label {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+        }
+
+        .booking-dates input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 13px;
+            width: 100%;
+        }
+
+        #booking-cta-button {
+            /* Трохи підправимо кнопку, щоб вона не розтягувалась */
+            white-space: nowrap;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .room-image-container {
+            width: 100%;
+            height: 200px;
+            background: #f0f4f6;
+
+            position: relative;
+            overflow: hidden;
+            /* ВАЖЛИВО: Встановлюємо співвідношення сторін 4:3 
+      (як у вашого placeholder 400x300).
+      Оскільки зображення тепер накладаються (position: absolute),
+      контейнер повинен мати чіткий розмір, інакше
+      його висота буде 0.
+    */
+            aspect-ratio: 4 / 3;
+        }
+
+        .room-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .room-slide-image {
+            /* display: none; */
+            /* <--- ВИДАЛЕНО */
+
+            width: 100%;
+            height: 100%;
+            /* <--- ЗМІНЕНО (було auto) */
+            object-fit: cover;
+
+            /* Робимо перехід трохи довшим для "плавності" */
+            transition: opacity 0.5s ease-in-out;
+
+            /* --- ДОДАНО --- */
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            /* Ховаємо через прозорість */
+            z-index: 1;
+            /* Базовий шар */
+        }
+
+        .room-slide-image.active {
+            opacity: 1;
+            /* Робимо видимим */
+            z-index: 2;
+            /* Перекриває неактивні слайди */
+        }
+
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            background-color: rgba(0, 0, 0, 0.4);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 1.2em;
+            font-weight: bold;
+
+            /* Ховаємо кнопки за замовчуванням */
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        /* Показуємо кнопки, коли курсор наводиться на ВСЮ КАРТКУ */
+        .room-card:hover .slider-btn {
+            opacity: 1;
+        }
+
+        .slider-btn-prev {
+            left: 10px;
+        }
+
+        .slider-btn-next {
+            right: 10px;
+        }
+
+        .room-card-content {
+            padding: 18px;
+        }
+
+        .room-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .room-meta span:last-child {
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .room-card h3 {
+            margin-bottom: 6px;
+        }
+
+        .room-card p {
+            font-size: 14px;
+            margin: 0 0 12px;
+        }
+
+        h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 8px;
+        }
+
+        .facilities-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .facility-pill {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        /* --- Кнопки Адміна --- */
+        .admin-actions {
+            border-top: 1px solid var(--border);
+            padding: 12px 18px;
+            background: var(--bg);
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+
+        .cta-secondary,
+        .cta-danger {
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--muted);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cta-danger {
+            color: var(--danger);
+        }
+
+        .cta-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: #f0f9f9;
+        }
+
+        .cta-danger:hover {
+            background: #fff5f5;
+            border-color: var(--danger);
+        }
+
+
+        /* --- Футер --- */
+        footer {
+            padding: 22px 24px;
+            border-top: 1px solid var(--border);
+            background: transparent;
+            margin-top: 32px;
+        }
+
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .social {
+            display: flex;
+            gap: 8px;
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+
+        .selection-action-container {
+            padding-top: 16px;
+            margin-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ДОДАНО: Стиль для самої кнопки */
+        .cta-select-room {
+            width: 100%;
+            text-align: center;
+        }
+
+        /* ДОДАНО: Стиль кнопки, коли картка обрана */
+        .room-card.selected .cta-select-room {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            font-weight: 700;
+        }
+
+        .room-card.selected .cta-select-room:hover {
+            background: var(--accent-dark);
+            border-color: var(--accent-dark);
+        }
+
+        /* ========================================
+           НОВІ СТИЛІ ДЛЯ ФІЛЬТРІВ
+           ========================================
+        */
+        .filter-toggle-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 12px;
+        }
+
+        #toggle-filter-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        #filter-container {
+            /* Ховаємо контейнер за замовчуванням */
+            display: none;
+        }
+
+        .filter-grid-3-col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px 18px;
+            margin-bottom: 12px;
+        }
+
+        .filter-grid-2-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 18px;
+            margin-bottom: 12px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+            padding: 10px;
+            background: var(--bg);
+            border-radius: 8px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent);
+        }
+
+        .filter-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .filter-actions .cta-secondary {
+            font-size: 14px;
+            padding: 10px 16px;
+        }
+
+        .filter-actions .cta {
+            font-size: 14px;
+            padding: 10px 16px;
+        }
+
+        .physical-room-map {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .physical-room-unit {
+            font-size: 0.8em;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: #e6fefe;
+            /* Колір вільного (світлий) */
+            color: #0c4a49;
+            cursor: default;
+            transition: all 0.2s;
+        }
+
+        .physical-room-unit.booked {
+            background-color: #6c757d;
+            /* Колір зайнятого (темний) */
+            border-color: #5a6268;
+            color: white;
+            text-decoration: line-through;
+        }
+
+        /* Інфо про доступність для звичайного користувача */
+        .availability-info {
+            font-size: 0.9em;
+            background-color: #f4f4f4;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .physical-room-unit {
+            /* Робимо схожим на кнопку */
+            border: 1px solid #ccc;
+            padding: 6px 10px;
+            margin: 2px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            background: #e6fefe;
+            color: #0c4a49;
+            transition: all 0.2s;
+        }
+
+        .physical-room-unit:hover:not(.booked) {
+            background: #b2f5ea;
+            transform: translateY(-1px);
+        }
+
+        .physical-room-unit.selected {
+            background-color: #2b7a78;
+            color: white;
+            border-color: #2b7a78;
+            box-shadow: 0 0 0 2px rgba(43, 122, 120, 0.3);
+        }
+
+        .physical-room-unit.booked {
+            background-color: #cbd5e0;
+            color: #718096;
+            cursor: not-allowed;
+            text-decoration: line-through;
+            border-color: #cbd5e0;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            display: none;
+        }
+
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 101;
+            display: none;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal.form-card {
+            padding-top: 24px;
+            padding-bottom: 24px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .modal-actions form {
+            margin: 0;
+        }
+
+
+
+
+
+        .custom-datetime-picker {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            width: 100%;
+            position: relative;
+        }
+
+        .cdp-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cdp-input {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+            min-width: 200px;
+        }
+
+        .cdp-input:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+            border-color: #2b7a78;
+            /* Твій акцентний колір */
+        }
+
+        .cdp-input.active {
+            border-color: #2b7a78;
+            box-shadow: 0 0 0 3px rgba(43, 122, 120, 0.15);
+        }
+
+        .cdp-date {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .cdp-time {
+            font-size: 14px;
+            color: #666;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        /* --- Стилізація Flatpickr під твій дизайн --- */
+        .flatpickr-calendar {
+            border-radius: 16px !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+            border: none !important;
+            font-family: system-ui, sans-serif !important;
+        }
+
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange {
+            background: #2b7a78 !important;
+            border-color: #2b7a78 !important;
+        }
+
+        /* Стиль для заблокованих дат */
+        .flatpickr-day.disabled {
+            background: #f3f3f3 !important;
+            color: #ccc !important;
+            text-decoration: line-through;
+            cursor: not-allowed;
+        }
+
+
+
+
+
+
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            border-left: 4px solid #e53e3e;
+            /* Червона лінія зліва */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 16px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            min-width: 300px;
+        }
+
+        .toast-notification.show {
+            top: 40px;
+            /* Ефект випадання */
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .toast-icon {
+            color: #e53e3e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: #1a202c;
+            margin-bottom: 2px;
+        }
+
+        .toast-message {
+            font-size: 13px;
+            color: #4a5568;
+        }
+
+        .toast-close {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: #a0aec0;
+            font-size: 18px;
+        }
+
+        .toast-close:hover {
+            color: #4a5568;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container nav">
+            <div class="brand">
+                <a href="{{HOTEL_SERVICE_URL}}/">
+                    <div class="logo">E</div>
+                    <div>
+                        <div style="font-weight:700">Edemium</div>
+                        <div style="font-size:12px; color:var(--muted)">Цифровий сервіс готельної мережі</div>
+                    </div>
+                </a>
+            </div>
+
+            <nav aria-label="Головне меню">
+                <ul>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/rooms">Номери</a></li>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/services">Сервіси</a></li>
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/my-bookings">Мої бронювання</a></li>
+                    {% if is_admin %}
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/admin/panel">Адмін панель</a></li>
+                    {% endif %}
+                    <li><a href="{{ HOTEL_SERVICE_URL }}/about_us">Про нас</a></li>
+                </ul>
+            </nav>
+
+            <div class="actions">
+                {% if not is_authorized %}
+                <a class="cta-outline" href="{{ USER_SERVICE_URL }}/login">Увійти</a>
+                {% else %}
+                <a class="cta-outline" href="{{ USER_SERVICE_URL }}/logout">Вийти</a>
+                {% endif %}
+                <a class="cta" href="{{ HOTEL_SERVICE_URL }}/rooms">Забронювати</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModals()"></div>
+
+    <div class="modal card" id="delete-modal">
+        <h3>Підтвердження</h3>
+        <p>Ви дійсно хочете видалити цей номер? Цю дію неможливо скасувати.</p>
+        <div class="modal-actions">
+            <button class="cta-secondary" onclick="closeModals()">Скасувати</button>
+
+            <form id="delete-form" method="POST" action="">
+                <button type="submit" class="cta-danger">Видалити</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal card form-card" id="edit-modal">
+        <h2>Редагувати номер</h2>
+
+        <form id="edit-form" method="POST" action="">
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <label>Тип
+                    <select id="edit-type" name="type" required>
+                        <option value="Стандарт">Стандартний номер</option>
+                        <option value="Покращений стандарт">Покращений стандарт</option>
+                        <option value="Напівлюкс">Напівлюкс</option>
+                        <option value="Люкс">Люкс</option>
+                        <option value="Президентський люкс">Президентський люкс</option>
+                    </select>
+                </label>
+                <label>Місткість (гостей)
+                    <input id="edit-guest_capacity" type="number" name="guest_capacity" step="1" required>
+                </label>
+            </div>
+
+            <label>Ціна (UAH/ніч)
+                <input id="edit-price" type="number" name="price" step="0.01" required>
+            </label>
+
+            <label>Опис
+                <textarea id="edit-description" name="description" required></textarea>
+            </label>
+
+            <label>Зручності</label>
+            <div id="edit-facilities-container" style="display: flex; flex-direction: column;"></div>
+
+            <div class="modal-actions" style="margin-top: 20px;">
+                <button type="button" class="cta-secondary" onclick="closeModals()">Скасувати</button>
+                <button type="submit" class="cta">Редагувати</button>
+            </div>
+        </form>
+    </div>
+
+    <main class="container">
+
+        <div class="spacer"></div>
+
+        {% if is_admin %}
+        <section class="card form-card">
+            <h2>Додати новий номер</h2>
+
+            <form method="post" action="{{HOTEL_SERVICE_URL}}/rooms" enctype="multipart/form-data">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px;">
+                    <label>Назва
+                        <input type="text" name="name" placeholder="Номер" required>
+                    </label>
+                    <label>Тип
+                        <select name="type" required>
+                            <option value="" disabled selected>Оберіть тип номера</option>
+                            <option value="Стандарт">Стандартний номер</option>
+                            <option value="Покращений стандарт">Покращений стандарт</option>
+                            <option value="Напівлюкс">Напівлюкс</option>
+                            <option value="Люкс">Люкс</option>
+                            <option value="Президентський люкс">Президентський люкс</option>
+                        </select>
+                    </label>
+                    <label>Ціна (UAH/ніч)
+                        <input type="number" name="price" step="0.01" placeholder="1500" required>
+                    </label>
+                    <label>Місткість (гостей)
+                        <input type="number" name="guest_capacity" step="1" placeholder="2" required>
+                    </label>
+                </div>
+
+                <label>Фізичні номери (через кому)
+                    <input type="text" name="room_numbers" placeholder="Напр., 101, 102, 201A" required>
+                </label>
+
+                <label>Опис
+                    <textarea name="description" placeholder="Короткий опис номера..." required></textarea>
+                </label>
+
+                <label>Зручності</label>
+                <div id="facilities-container" style="display: flex; flex-direction: column;"></div>
+
+                <label>Зображення (можна обрати декілька)
+                    <input type="file" name="images" multiple required>
+                </label>
+
+                <button type="submit" class="cta" style="margin-top: 12px;">Додати номер</button>
+            </form>
+        </section>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const container = document.getElementById("facilities-container");
+                if (!container) return; // Перевірка, чи елемент існує (якщо не адмін)
+
+                let draggedEl = null;
+                let placeholder = document.createElement("div");
+                placeholder.className = "facility-placeholder";
+
+                const createFacilityInput = (value = "") => {
+                    const div = document.createElement("div");
+                    div.className = "facility-item";
+                    div.draggable = true;
+                    div.innerHTML = `<input type="text" name="facilities" placeholder="Напр., 'Wi-Fi'" value="${value}">`;
+
+                    div.addEventListener("mouseenter", () => div.classList.add("hover"));
+                    div.addEventListener("mouseleave", () => div.classList.remove("hover"));
+
+                    div.addEventListener("dragstart", e => {
+                        draggedEl = div;
+                        div.classList.add("dragging");
+                        e.dataTransfer.effectAllowed = "move";
+                        setTimeout(() => div.style.display = "none", 0);
+                    });
+
+                    div.addEventListener("dragend", () => {
+                        div.style.display = "flex";
+                        div.classList.remove("dragging");
+                        placeholder.remove();
+                        draggedEl = null;
+                    });
+
+                    div.querySelector("input").addEventListener("input", manageInputs);
+                    return div;
+                };
+
+                container.addEventListener("dragover", e => {
+                    e.preventDefault();
+                    const afterElement = getDragAfterElement(container, e.clientY);
+                    if (afterElement == null) {
+                        container.append(placeholder);
+                    } else {
+                        container.insertBefore(placeholder, afterElement);
+                    }
+                });
+
+                container.addEventListener("drop", e => {
+                    e.preventDefault();
+                    if (draggedEl) {
+                        container.insertBefore(draggedEl, placeholder);
+                    }
+                });
+
+                function getDragAfterElement(container, y) {
+                    const draggableElements = [...container.querySelectorAll(".facility-item:not(.dragging)")];
+                    return draggableElements.reduce((closest, child) => {
+                        const box = child.getBoundingClientRect();
+                        const offset = y - box.top - box.height / 2;
+                        if (offset < 0 && offset > closest.offset) {
+                            return { offset: offset, element: child };
+                        } else {
+                            return closest;
+                        }
+                    }, { offset: Number.NEGATIVE_INFINITY }).element;
+                }
+
+                function manageInputs() {
+                    const inputs = [...container.querySelectorAll("input[name='facilities']")];
+                    const empty = inputs.filter(inp => inp.value.trim() === "");
+
+                    if (empty.length === 0) {
+                        container.append(createFacilityInput());
+                    }
+
+                    if (empty.length > 1) {
+                        for (let i = 1; i < empty.length; i++) {
+                            if (container.children.length > 1) empty[i].parentElement.remove();
+                        }
+                    }
+                }
+                container.append(createFacilityInput());
+            });
+        </script>
+
+        <style>
+            .facility-item {
+                display: flex;
+                align-items: center;
+                padding: 6px;
+                border: 1px solid transparent;
+                border-radius: 8px;
+                background: white;
+                transition: border-color 0.2s, box-shadow 0.2s;
+            }
+
+            .facility-item.hover {
+                box-shadow: 0 0 5px rgba(43, 122, 120, 0.3);
+            }
+
+            .facility-item.dragging {
+                opacity: 0.5;
+            }
+
+            .facility-placeholder {
+                height: 40px;
+                border: 2px dashed #9ca3af;
+                border-radius: 8px;
+                margin: 2px 0;
+                background: rgba(230, 230, 230, 0.3);
+            }
+        </style>
+        {% endif %}
+
+        <div class="filter-toggle-bar">
+            <button id="toggle-filter-btn" class="cta-outline">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+                Фільтри та сортування
+            </button>
+        </div>
+
+        <section class="card form-card" id="filter-container">
+            <form id="filter-form" method="GET" action="{{HOTEL_SERVICE_URL}}/rooms" onsubmit="cleanFilterForm(event)">
+
+                <h3 style="margin-top:0;">Дата</h3>
+                <div class="filter-grid-2-col">
+                    <label>Заїзд
+                        <input type="datetime-local" name="arrival_date"
+                            value="{{ arrival_date.strftime('%Y-%m-%dT%H:%M') if arrival_date else '' }}">
+                    </label>
+                    <label>Виїзд
+                        <input type="datetime-local" name="departure_date"
+                            value="{{ departure_date.strftime('%Y-%m-%dT%H:%M') if departure_date else '' }}">
+                    </label>
+                </div>
+
+                <h3>Ціна та Гості</h3>
+                <div class="filter-grid-3-col">
+                    <label>Мін. ціна (UAH)
+                        <input type="number" name="min_price" placeholder="0"
+                            value="{{ min_price if min_price is not none else '' }}">
+                    </label>
+                    <label>Макс. ціна (UAH)
+                        <input type="number" name="max_price" placeholder="5000"
+                            value="{{ max_price if max_price is not none else '' }}">
+                    </label>
+                    <label>Мін. гостей
+                        <input type="number" name="min_guest_capacity" placeholder="1" min="1"
+                            value="{{ min_guest_capacity if min_guest_capacity is not none else '' }}">
+                    </label>
+                </div>
+
+                <h3>Тип номеру</h3>
+                <div class="checkbox-group">
+                    {% set all_room_types = ["Стандарт", "Покращений стандарт", "Напівлюкс", "Люкс", "Президентський
+                    люкс"] %}
+                    {% for room_type in all_room_types %}
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="room_types" value="{{ room_type }}" {% if room_type in
+                            selected_room_types %}checked{% endif %}>
+                        {{ room_type }}
+                    </label>
+                    {% endfor %}
+                </div>
+
+                <h3>Зручності</h3>
+                <div class="checkbox-group">
+                    {% for facility in all_facilities %}
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="facilities" value="{{ facility }}" {% if facility in
+                            selected_facilities %}checked{% endif %}>
+                        {{ facility }}
+                    </label>
+                    {% endfor %}
+                </div>
+
+                <h3 style="margin-top: 18px;">Сортування</h3>
+                <label>Сортувати за
+                    <select name="sort_by">
+                        <option value="price_asc" {% if current_sort_by=='price_asc' %}selected{% endif %}>Ціна (від
+                            дешевших)</option>
+                        <option value="price_desc" {% if current_sort_by=='price_desc' %}selected{% endif %}>Ціна (від
+                            дорожчих)</option>
+                        <option value="capacity_desc" {% if current_sort_by=='capacity_desc' %}selected{% endif %}>
+                            Місткість (від більшої)</option>
+                        <option value="capacity_asc" {% if current_sort_by=='capacity_asc' %}selected{% endif %}>
+                            Місткість (від меншої)</option>
+                    </select>
+                </label>
+
+                <div class="filter-actions">
+                    <a href="{{HOTEL_SERVICE_URL}}/rooms" class="cta-secondary" type="button">Скинути все</a>
+                    <button type="submit" class="cta">Застосувати</button>
+                </div>
+            </form>
+        </section>
+        <h2 style="margin-top: 24px;" class="{% if is_admin %}h2-admin-margin{% endif %}">
+            Наші номери
+        </h2>
+
+        <div class="room-grid">
+
+            <div id="room-list-container" class="room-grid" style="display: contents;">
+
+                {% for ctx in room_contexts %}
+                <div class="card room-card" data-room-id="{{ ctx.data['id'] }}">
+
+                    <div class="room-image-container">
+                        {% set images = ctx.images %}
+                        {% if images %}
+
+                        {% for image_url in images %}
+                        <img src="{{HOTEL_SERVICE_URL}}{{ image_url }}"
+                            alt="{{ ctx.data['type'] }} image {{ loop.index }}"
+                            class="room-slide-image {% if loop.first %}active{% endif %}">
+                        {% endfor %}
+
+                        {% if images|length > 1 %}
+                        <button class="slider-btn slider-btn-prev" aria-label="Previous image">&lt;</button>
+                        <button class="slider-btn slider-btn-next" aria-label="Next image">&gt;</button>
+                        {% endif %}
+
+                        {% else %}
+                        <img src="https://placehold.co/400x300/2b7a78/ffffff?text=Edemium" alt="Фото відсутнє">
+                        {% endif %}
+                    </div>
+
+                    <div class="room-card-content">
+                        <div class="room-meta">
+                            <span>{{ "%.2f"|format(ctx.data['price']) }} UAH / ніч</span>
+                            <span>{{ ctx.data['guest_capacity'] }} гост...</span>
+                        </div>
+                        <h3>{{ ctx.data['type'] }}</h3>
+                        <p>{{ ctx.data['description'] }}</p>
+
+                        <h4>Номери №</h4>
+                        <div class="physical-room-map">
+                            {% for pr in ctx.physical_rooms %}
+                            <button type="button" class="physical-room-unit" data-id="{{ pr['id'] }}"
+                                data-room-name="{{ ctx.data['type'] }} {{ pr['room_number'] }}"
+                                onclick="togglePhysicalRoom(this, event)" title="Номер {{ pr['room_number'] }}">
+                                {{ pr['room_number'] }}
+                            </button>
+                            {% endfor %}
+                        </div>
+                        <h4>Зручності:</h4>
+                        <div class="facilities-list">
+                            {% for facility in ctx.data['facilities'] %}
+                            <span class="facility-pill">{{ facility }}</span>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+
+                    {% if is_admin %}
+                    <div class="admin-actions">
+                        <button class="cta-secondary" data-room='{{ ctx.json | tojson | safe }}'
+                            onclick="openEditModal(this)">
+                            Редагувати
+                        </button>
+                        <button class="cta-danger" data-id="{{ ctx.data['id'] }}" onclick="openDeleteModal(this)">
+                            Видалити
+                        </button>
+                    </div>
+                    {% endif %}
+
+                </div>
+                {% endfor %}
+                {% if not room_contexts %}
+                <div class="card" style="grid-column: 1 / -1; text-align: center;">
+                    <h3>Нічого не знайдено</h3>
+                    <p>На жаль, за вашими критеріями немає вільних номерів. Спробуйте змінити фільтри або дати.</p>
+                    <a href="{{HOTEL_SERVICE_URL}}/rooms" class="cta" style="margin-top: 10px;">Скинути фільтри</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <div id="booking-cta-container" class="booking-cta-container" style="display: none;">
+        <div class="booking-bar-inner">
+
+            <div class="booking-dates">
+
+                <label class="custom-datetime-picker">
+                    <span class="cdp-label">Заїзд</span>
+                    <div class="cdp-input" id="cdp-arrival-trigger">
+                        <span class="cdp-date" data-placeholder="Оберіть дату">Оберіть дату</span>
+                        <span class="cdp-time">--:--</span>
+                    </div>
+                    <input type="hidden" id="real-arrival-input">
+                </label>
+
+                <label class="custom-datetime-picker">
+                    <span class="cdp-label">Виїзд</span>
+                    <div class="cdp-input" id="cdp-departure-trigger">
+                        <span class="cdp-date" data-placeholder="Оберіть дату">Оберіть дату</span>
+                        <span class="cdp-time">--:--</span>
+                    </div>
+                    <input type="hidden" id="real-departure-input">
+                </label>
+
+            </div>
+
+            <button id="booking-cta-button" class="cta">
+                Бронювати (0)
+            </button>
+
+        </div>
+    </div>
+
+    {% if error_message %}
+    <div id="error-toast" class="toast-notification">
+        <div class="toast-icon"></div>
+        <div class="toast-content">
+            <div class="toast-title">Увага</div>
+            <div class="toast-message" id="toast-message-text"></div>
+        </div>
+        <button class="toast-close" onclick="hideToast()">&times;</button>
+    </div>
+
+    {% endif %}
+
+    <!-- <div id="booking-cta-container" class="booking-cta-container" style="display: none;">
+        <button id="booking-cta-button" class="cta">
+            Бронювати (0)
+        </button>
+    </div> -->
+
+    <footer>
+        <div class="container footer-inner">
+            <div>
+                <div style="font-weight:700">Edemium</div>
+                <div class="muted">© 2025 Edemium. Всі права захищені.</div>
+            </div>
+
+            <div class="social muted">Instagram • Facebook • LinkedIn</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Цей блок стосується логіки створення/редагування кімнати в секції АДМІНКИ (якщо вона відображається).
+
+            // Логіка для форми "Додати новий номер"
+            const container = document.getElementById("facilities-container");
+            if (container) {
+                let draggedEl = null;
+                let placeholder = document.createElement("div");
+                placeholder.className = "facility-placeholder";
+
+                const createFacilityInput = (value = "") => {
+                    const div = document.createElement("div");
+                    div.className = "facility-item";
+                    div.draggable = true;
+                    div.innerHTML = `<input type="text" name="facilities" placeholder="Напр., 'Wi-Fi'" value="${value}">`;
+
+                    div.addEventListener("mouseenter", () => div.classList.add("hover"));
+                    div.addEventListener("mouseleave", () => div.classList.remove("hover"));
+
+                    div.addEventListener("dragstart", e => {
+                        draggedEl = div;
+                        div.classList.add("dragging");
+                        e.dataTransfer.effectAllowed = "move";
+                        setTimeout(() => div.style.display = "none", 0);
+                    });
+
+                    div.addEventListener("dragend", () => {
+                        div.style.display = "flex";
+                        div.classList.remove("dragging");
+                        placeholder.remove();
+                        draggedEl = null;
+                    });
+
+                    div.querySelector("input").addEventListener("input", manageInputs);
+                    return div;
+                };
+
+                container.addEventListener("dragover", e => {
+                    e.preventDefault();
+                    const afterElement = getDragAfterElement(container, e.clientY);
+                    if (afterElement == null) {
+                        container.append(placeholder);
+                    } else {
+                        container.insertBefore(placeholder, afterElement);
+                    }
+                });
+
+                container.addEventListener("drop", e => {
+                    e.preventDefault();
+                    if (draggedEl) {
+                        container.insertBefore(draggedEl, placeholder);
+                    }
+                });
+
+                function getDragAfterElement(container, y) {
+                    const draggableElements = [...container.querySelectorAll(".facility-item:not(.dragging)")];
+                    return draggableElements.reduce((closest, child) => {
+                        const box = child.getBoundingClientRect();
+                        const offset = y - box.top - box.height / 2;
+                        if (offset < 0 && offset > closest.offset) {
+                            return { offset: offset, element: child };
+                        } else {
+                            return closest;
+                        }
+                    }, { offset: Number.NEGATIVE_INFINITY }).element;
+                }
+
+                function manageInputs() {
+                    const inputs = [...container.querySelectorAll("input[name='facilities']")];
+                    const empty = inputs.filter(inp => inp.value.trim() === "");
+
+                    if (empty.length === 0) {
+                        container.append(createFacilityInput());
+                    }
+
+                    if (empty.length > 1) {
+                        for (let i = 1; i < empty.length; i++) {
+                            if (container.children.length > 1) empty[i].parentElement.remove();
+                        }
+                    }
+                }
+                container.append(createFacilityInput());
+            }
+
+            // ===============================================
+            // ЛОГІКА МОДАЛЬНИХ ВІКОН АДМІНКИ (ВИДАЛИТИ/РЕДАГУВАТИ)
+            // ===============================================
+            const overlay = document.getElementById('modal-overlay');
+            const deleteModal = document.getElementById('delete-modal');
+            const editModal = document.getElementById('edit-modal');
+            const deleteForm = document.getElementById('delete-form');
+            const editForm = document.getElementById('edit-form');
+            const HOTEL_SERVICE_URL = '{{HOTEL_SERVICE_URL}}'; // Змінна з контексту
+
+            // Поля форми редагування
+            const editType = document.getElementById('edit-type');
+            const editGuestCapacity = document.getElementById('edit-guest_capacity');
+            const editPrice = document.getElementById('edit-price');
+            const editDescription = document.getElementById('edit-description');
+            const editFacilitiesContainer = document.getElementById('edit-facilities-container');
+
+            window.openDeleteModal = function (button) {
+                const roomId = button.getAttribute('data-id');
+                showDeleteModal(roomId);
+            }
+
+            window.openEditModal = function (button) {
+                const roomDataString = button.getAttribute('data-room');
+                const roomObject = JSON.parse(roomDataString);
+                showEditModal(roomObject);
+            }
+
+            window.closeModals = function () {
+                overlay.style.display = 'none';
+                deleteModal.style.display = 'none';
+                editModal.style.display = 'none';
+            }
+
+            function showDeleteModal(roomId) {
+                deleteForm.action = `${HOTEL_SERVICE_URL}/rooms/delete/${roomId}`;
+                overlay.style.display = 'block';
+                deleteModal.style.display = 'block';
+            }
+
+            // Функції для динамічних полів "facilities" у вікні редагування
+            const createEditFacilityInput = (value = "") => {
+                const div = document.createElement("div");
+                div.className = "facility-item";
+                div.innerHTML = `<input type="text" name="facilities" placeholder="Напр., 'Wi-Fi'" value="${value}">`;
+                div.querySelector("input").addEventListener("input", manageEditInputs);
+                return div;
+            };
+
+            function manageEditInputs() {
+                const inputs = [...editFacilitiesContainer.querySelectorAll("input[name='facilities']")];
+                const empty = inputs.filter(inp => inp.value.trim() === "");
+
+                if (empty.length === 0) {
+                    editFacilitiesContainer.append(createEditFacilityInput());
+                }
+
+                if (empty.length > 1) {
+                    for (let i = 1; i < empty.length; i++) {
+                        if (editFacilitiesContainer.children.length > 1) empty[i].parentElement.remove();
+                    }
+                }
+            }
+
+            function showEditModal(room) {
+                editForm.action = `${HOTEL_SERVICE_URL}/rooms/edit/${room.id}`;
+                editType.value = room.type;
+                editGuestCapacity.value = room.guest_capacity;
+                editPrice.value = room.price;
+                editDescription.value = room.description;
+
+                editFacilitiesContainer.innerHTML = ''; // Очищуємо старі
+                if (room.facilities && room.facilities.length > 0) {
+                    room.facilities.forEach(facility => {
+                        editFacilitiesContainer.append(createEditFacilityInput(facility));
+                    });
+                }
+                editFacilitiesContainer.append(createEditFacilityInput()); // Додаємо одне пусте поле
+
+                overlay.style.display = 'block';
+                editModal.style.display = 'block';
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // ============================================================
+            // 0. ГАРАНТОВАНЕ СТВОРЕННЯ TOAST (ВИПРАВЛЕНО Z-INDEX)
+            // ============================================================
+            if (!document.getElementById('error-toast')) {
+                const toastHTML = `
+            <div id="error-toast" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #fff; border-left: 4px solid #e53e3e; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 16px 24px; border-radius: 12px; display: flex; align-items: center; gap: 12px; z-index: 999999; opacity: 0; visibility: hidden; transition: all 0.3s ease; min-width: 320px; font-family: system-ui, sans-serif;">
+                <div style="color:#e53e3e; font-size:24px;">⚠️</div>
+                <div style="flex:1;">
+                    <div style="font-weight:700; color:#1a202c; font-size:15px; margin-bottom:4px;">Увага</div>
+                    <div id="toast-message-text" style="color:#4a5568; font-size:14px; line-height:1.4;"></div>
+                </div>
+                <button onclick="hideToast()" style="background:none; border:none; font-size:24px; color:#a0aec0; cursor:pointer; padding:0 8px;">&times;</button>
+            </div>`;
+                document.body.insertAdjacentHTML('beforeend', toastHTML);
+            }
+
+            window.showToast = function (message) {
+                const toast = document.getElementById('error-toast');
+                const textEl = document.getElementById('toast-message-text');
+                if (toast && textEl) {
+                    textEl.textContent = message;
+                    toast.style.opacity = '1';
+                    toast.style.visibility = 'visible';
+                    toast.style.top = '40px';
+                    // Скидаємо попередній таймер, якщо він був
+                    if (window.toastTimeout) clearTimeout(window.toastTimeout);
+                    window.toastTimeout = setTimeout(() => hideToast(), 5000);
+                }
+            };
+
+            window.hideToast = function () {
+                const toast = document.getElementById('error-toast');
+                if (toast) {
+                    toast.style.opacity = '0';
+                    toast.style.visibility = 'hidden';
+                    toast.style.top = '20px';
+                }
+            };
+
+            // Обробка помилки з URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const errorMsg = urlParams.get('error_message');
+            if (errorMsg) {
+                showToast(decodeURIComponent(errorMsg));
+                const newUrl = window.location.pathname + window.location.search.replace(/[\?&]error_message=[^&]+/, '').replace(/^&/, '?');
+                window.history.replaceState({}, document.title, newUrl);
+            }
+
+            // ============================================================
+            // 1. ЗМІННІ ТА ЕЛЕМЕНТИ
+            // ============================================================
+            const bookingCtaContainer = document.getElementById("booking-cta-container");
+            const bookingCtaButton = document.getElementById("booking-cta-button");
+            const HOTEL_SERVICE_URL = '{{HOTEL_SERVICE_URL}}';
+
+            const arrivalTrigger = document.getElementById('cdp-arrival-trigger');
+            const departureTrigger = document.getElementById('cdp-departure-trigger');
+            const arrivalInputHidden = document.getElementById('real-arrival-input');
+            const departureInputHidden = document.getElementById('real-departure-input');
+
+            const selectedPhysicalRoomIds = new Set();
+            let currentBlockedIntervals = [];
+            let debounceTimer = null; // Таймер для UX затримки
+
+            // ============================================================
+            // 2. ЛОГІКА
+            // ============================================================
+
+            // Знаходить найближчий вільний час, якщо обраний зайнятий
+            function getEarliestAvailableTime(targetDate) {
+                if (!targetDate || currentBlockedIntervals.length === 0) return targetDate;
+
+                // Копія масиву і сортування
+                const sortedIntervals = [...currentBlockedIntervals].sort((a, b) => a.start - b.start);
+
+                let candidate = new Date(targetDate);
+                // Безпечний цикл (макс 10 стрибків), щоб не завис браузер
+                for (let i = 0; i < 10; i++) {
+                    let conflict = false;
+                    const t = candidate.getTime();
+
+                    for (const booking of sortedIntervals) {
+                        // Якщо час всередині бронювання [Start, End)
+                        if (t >= booking.start.getTime() && t < booking.end.getTime()) {
+                            candidate = new Date(booking.end); // Стрибаємо в кінець цього бронювання
+                            conflict = true;
+                            break;
+                        }
+                    }
+                    if (!conflict) return candidate;
+                }
+                return targetDate;
+            }
+
+            function isDateTimeBlocked(dateToCheck) {
+                if (!dateToCheck || currentBlockedIntervals.length === 0) return false;
+                const time = dateToCheck.getTime();
+                for (const booking of currentBlockedIntervals) {
+                    if (time >= booking.start.getTime() && time < booking.end.getTime()) return true;
+                }
+                return false;
+            }
+
+            // Оновлює текст у наших гарних інпутах
+            function updatePickerDisplay(instance, dateStr, triggerElement) {
+                if (!triggerElement) return;
+                if (!dateStr || !instance.selectedDates[0]) {
+                    triggerElement.querySelector('.cdp-date').textContent = "Оберіть дату";
+                    triggerElement.querySelector('.cdp-time').textContent = "--:--";
+                    triggerElement.classList.remove('active');
+                    return;
+                }
+                const d = instance.selectedDates[0];
+                // Форматування
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                const hours = String(d.getHours()).padStart(2, '0');
+                const minutes = String(d.getMinutes()).padStart(2, '0');
+
+                triggerElement.querySelector('.cdp-date').textContent = `${day}.${month}.${year}`;
+                triggerElement.querySelector('.cdp-time').textContent = `${hours}:${minutes}`;
+                triggerElement.classList.add('active');
+            }
+
+            // ============================================================
+            // 3. ОБРОБКА ЗМІНИ ДАТИ (UX MAGIC)
+            // ============================================================
+            const handleDateChange = (instance, isArrival) => {
+                const selectedDate = instance.selectedDates[0];
+                if (!selectedDate) return;
+
+                // --- 1. SMART AUTO-TIME (Миттєво) ---
+                // Якщо юзер вибрав день, а час за замовчуванням (12:00) зайнятий -> ставимо вільний
+                if (isDateTimeBlocked(selectedDate)) {
+                    const smartTime = getEarliestAvailableTime(selectedDate);
+                    // Оновлюємо без виклику подій, щоб не було циклу
+                    instance.setDate(smartTime, false);
+                }
+
+                // Оновлюємо візуальний текст відразу, щоб юзер бачив, що він робить
+                const currentValidDate = instance.selectedDates[0];
+                const trigger = isArrival ? arrivalTrigger : departureTrigger;
+                updatePickerDisplay(instance, instance.input.value, trigger);
+
+                // --- 2. БЛОКУВАННЯ МАЙБУТНЬОГО (maxDate) ---
+                // Якщо це Заїзд -> обмежуємо Виїзд до наступного бронювання
+                if (isArrival && fpDeparture) {
+                    const minNextDay = new Date(currentValidDate.getTime() + 86400000); // +24h
+                    fpDeparture.set('minDate', minNextDay);
+
+                    // Шукаємо найближче бронювання ПІСЛЯ дати заїзду
+                    let nextBookingStart = null;
+                    const sortedIntervals = [...currentBlockedIntervals].sort((a, b) => a.start - b.start);
+
+                    for (const booking of sortedIntervals) {
+                        if (booking.start > currentValidDate) {
+                            nextBookingStart = booking.start;
+                            break; // Знайшли перше-ліпше
+                        }
+                    }
+
+                    // Встановлюємо "стелю" для виїзду. Якщо null -> без обмежень.
+                    fpDeparture.set('maxDate', nextBookingStart);
+
+                    // Якщо дата виїзду вже стояла і порушує нові межі -> виправляємо
+                    const currentDep = fpDeparture.selectedDates[0];
+                    if (currentDep) {
+                        // Якщо виїзд раніше за (заїзд + 24г)
+                        if (currentDep < minNextDay) {
+                            const smartDep = getEarliestAvailableTime(minNextDay);
+                            fpDeparture.setDate(smartDep, false);
+                            updatePickerDisplay(fpDeparture, fpDeparture.input.value, departureTrigger);
+                        }
+                        // Якщо виїзд пізніше за maxDate (конфлікт)
+                        if (nextBookingStart && currentDep > nextBookingStart) {
+                            fpDeparture.clear(); // Просто очищаємо, хай юзер обере заново
+                            updatePickerDisplay(fpDeparture, "", departureTrigger);
+                        }
+                    }
+                }
+
+                // --- 3. DEBOUNCE ВАЛІДАЦІЯ (Затримка 1.5с) ---
+                // Даємо юзеру час докрутити хвилини, перш ніж показувати помилку
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+
+                    // Перевірка: чи точка часу зайнята (раптом юзер вручну ввів поганий час)
+                    if (isDateTimeBlocked(currentValidDate)) {
+                        showToast(`Час ${instance.formatDate(currentValidDate, "H:i")} вже зайнятий!`);
+                        // Не очищаємо відразу, даємо шанс виправити, або можна очистити:
+                        instance.clear();
+                        updatePickerDisplay(instance, "", trigger);
+                        return;
+                    }
+
+                    // Якщо це виїзд - перевірка на 24 години
+                    if (!isArrival && fpArrival && fpArrival.selectedDates[0]) {
+                        const start = fpArrival.selectedDates[0];
+                        const end = currentValidDate;
+                        if ((end - start) < 86400000) {
+                            showToast("Мінімальний час — 24 години.");
+                            // Авто-фікс: ставимо рівно +24 години
+                            const fixDate = new Date(start.getTime() + 86400000);
+                            instance.setDate(fixDate, false);
+                            updatePickerDisplay(instance, instance.input.value, trigger);
+                        }
+                    }
+
+                }, 1500);
+            };
+
+            // ============================================================
+            // 4. ІНІЦІАЛІЗАЦІЯ
+            // ============================================================
+            const commonConfig = {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                time_24hr: true,
+                locale: "uk",
+                minDate: "today",
+                disableMobile: "true",
+                animate: true,
+                minuteIncrement: 1 // Дозволяємо будь-яку хвилину
+            };
+
+            let fpArrival, fpDeparture;
+
+            if (arrivalInputHidden && arrivalTrigger) {
+                fpArrival = flatpickr(arrivalInputHidden, {
+                    ...commonConfig,
+                    positionElement: arrivalTrigger,
+                    onChange: (selectedDates, dateStr) => handleDateChange(fpArrival, true)
+                });
+                arrivalTrigger.addEventListener('click', (e) => { e.preventDefault(); fpArrival.open(); });
+            }
+
+            if (departureInputHidden && departureTrigger) {
+                fpDeparture = flatpickr(departureInputHidden, {
+                    ...commonConfig,
+                    positionElement: departureTrigger,
+                    onChange: (selectedDates, dateStr) => handleDateChange(fpDeparture, false)
+                });
+                departureTrigger.addEventListener('click', (e) => { e.preventDefault(); fpDeparture.open(); });
+            }
+
+            // ============================================================
+            // 5. ЗАВАНТАЖЕННЯ ЗАЙНЯТОСТІ
+            // ============================================================
+            async function updateBlockedDates() {
+                const idsArray = [...selectedPhysicalRoomIds];
+
+                if (idsArray.length === 0) {
+                    if (bookingCtaContainer) bookingCtaContainer.style.display = "none";
+                    currentBlockedIntervals = [];
+                    if (fpArrival) { fpArrival.set('disable', []); fpArrival.clear(); fpArrival.redraw(); updatePickerDisplay(fpArrival, "", arrivalTrigger); }
+                    if (fpDeparture) { fpDeparture.set('disable', []); fpDeparture.clear(); fpDeparture.redraw(); updatePickerDisplay(fpDeparture, "", departureTrigger); }
+                    return;
+                }
+
+                if (bookingCtaContainer) bookingCtaContainer.style.display = "block";
+                if (bookingCtaButton) bookingCtaButton.textContent = `Бронювати (${idsArray.length})`;
+
+                try {
+                    const params = new URLSearchParams();
+                    idsArray.forEach(id => params.append("ids", id));
+                    const response = await fetch(`${HOTEL_SERVICE_URL}/rooms/check_dates?${params.toString()}`);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const mergedIntervals = await response.json();
+
+                    currentBlockedIntervals = mergedIntervals.map(i => ({
+                        start: new Date(i.start),
+                        end: new Date(i.end)
+                    }));
+
+                    // Блокуємо день у календарі ТІЛЬКИ якщо він ПОВНІСТЮ зайнятий
+                    const disableFunction = function (date) {
+                        const dayStart = new Date(date); dayStart.setHours(0, 0, 0, 0);
+                        const dayEnd = new Date(date); dayEnd.setHours(23, 59, 59, 999);
+                        for (const booking of currentBlockedIntervals) {
+                            if (booking.start <= dayStart && booking.end >= dayEnd) return true;
+                        }
+                        return false;
+                    };
+
+                    if (fpArrival) { fpArrival.set('disable', [disableFunction]); fpArrival.redraw(); }
+                    if (fpDeparture) { fpDeparture.set('disable', [disableFunction]); fpDeparture.redraw(); }
+
+                } catch (err) {
+                    console.error("Error:", err);
+                }
+            }
+
+            window.togglePhysicalRoom = function (btn, event) {
+                if (event) { event.stopPropagation(); event.preventDefault(); }
+                const id = btn.getAttribute("data-id");
+                if (!id) return;
+
+                if (selectedPhysicalRoomIds.has(id)) {
+                    selectedPhysicalRoomIds.delete(id);
+                    btn.classList.remove("selected");
+                    btn.classList.remove("booked");
+                } else {
+                    selectedPhysicalRoomIds.add(id);
+                    btn.classList.add("selected");
+                }
+                updateBlockedDates();
+            };
+
+            // ============================================================
+            // 6. ВІДПРАВКА
+            // ============================================================
+            if (bookingCtaButton) {
+                bookingCtaButton.addEventListener("click", () => {
+                    if (!fpArrival || !fpDeparture) return;
+                    const arrivalDate = fpArrival.selectedDates[0];
+                    const departureDate = fpDeparture.selectedDates[0];
+
+                    if (selectedPhysicalRoomIds.size === 0) { showToast("Оберіть хоч один номер."); return; }
+                    if (!arrivalDate || !departureDate) { showToast("Вкажіть дати заїзду та виїзду."); return; }
+
+                    // Фінальна перевірка (тут без затримки)
+                    if (isDateTimeBlocked(arrivalDate)) { showToast("Час заїзду зайнятий! Оберіть інший."); return; }
+                    if ((departureDate - arrivalDate) < 86400000) { showToast("Мінімальний час — 24 години."); return; }
+
+                    // Додаткова перевірка на конфлікт діапазону
+                    for (const booking of currentBlockedIntervals) {
+                        if (arrivalDate < booking.end && departureDate > booking.start) {
+                            showToast("Діапазон перетинається з існуючим бронюванням!");
+                            return;
+                        }
+                    }
+
+                    // Корекція Timezone
+                    const toLocalISOString = (date) => {
+                        const offset = date.getTimezoneOffset() * 60000;
+                        return new Date(date.getTime() - offset).toISOString().slice(0, -1);
+                    };
+
+                    const params = new URLSearchParams();
+                    [...selectedPhysicalRoomIds].forEach(id => params.append("physical_room_ids", id));
+                    params.append("arrival_date", toLocalISOString(arrivalDate));
+                    params.append("departure_date", toLocalISOString(departureDate));
+
+                    window.location.href = `${HOTEL_SERVICE_URL}/bookings?${params.toString()}`;
+                });
+            }
+
+            // --- ІНІЦІАЛІЗАЦІЯ З ФІЛЬТРІВ ---
+            const filterArrivalInput = document.querySelector('input[name="arrival_date"]');
+            const filterDepartureInput = document.querySelector('input[name="departure_date"]');
+            if (filterArrivalInput && filterArrivalInput.value && fpArrival) {
+                fpArrival.setDate(filterArrivalInput.value);
+                updatePickerDisplay(fpArrival, filterArrivalInput.value, arrivalTrigger);
+                // При завантаженні теж ставимо обмеження
+                const arrDate = new Date(filterArrivalInput.value);
+                if (fpDeparture) {
+                    fpDeparture.set('minDate', new Date(arrDate.getTime() + 86400000));
+                    handleDateChange(fpArrival, true); // Викликаємо логіку maxDate
+                }
+            }
+            if (filterDepartureInput && filterDepartureInput.value && fpDeparture) {
+                fpDeparture.setDate(filterDepartureInput.value);
+                updatePickerDisplay(fpDeparture, filterDepartureInput.value, departureTrigger);
+            }
+
+            // (Код Слайдера і Хедера залишається тим самим)
+            const allRoomCards = document.querySelectorAll(".room-card");
+            allRoomCards.forEach(card => {
+                const container = card.querySelector(".room-image-container");
+                if (!container) return;
+                const prevButton = container.querySelector(".slider-btn-prev");
+                const nextButton = container.querySelector(".slider-btn-next");
+                const images = container.querySelectorAll(".room-slide-image");
+                if (images.length > 1 && prevButton && nextButton) {
+                    let currentSlideIndex = 0;
+                    const showSlide = (idx) => { images.forEach(img => img.classList.remove('active')); images[idx].classList.add('active'); };
+                    nextButton.addEventListener("click", (e) => { e.stopPropagation(); e.preventDefault(); currentSlideIndex = (currentSlideIndex + 1) % images.length; showSlide(currentSlideIndex); });
+                    prevButton.addEventListener("click", (e) => { e.stopPropagation(); e.preventDefault(); currentSlideIndex = (currentSlideIndex - 1 + images.length) % images.length; showSlide(currentSlideIndex); });
+                }
+                card.addEventListener("click", e => {
+                    if (e.target.closest("button") || e.target.closest(".physical-room-unit") || e.target.closest(".admin-actions") || e.target.closest(".flatpickr-calendar")) return;
+                    const roomId = card.dataset.roomId;
+                    if (roomId) {
+                        let url = `/rooms/${roomId}`;
+                        const params = new URLSearchParams();
+                        if (filterArrivalInput?.value) params.append("arrival_date", filterArrivalInput.value);
+                        if (filterDepartureInput?.value) params.append("departure_date", filterDepartureInput.value);
+                        if (params.toString()) url += `?${params.toString()}`;
+                        window.location.href = url;
+                    }
+                });
+            });
+
+            const header = document.querySelector("header");
+            let lastScroll = 0;
+            if (header) {
+                window.addEventListener("scroll", () => {
+                    const currentScroll = window.pageYOffset;
+                    if (currentScroll <= 0) { header.classList.remove("hide"); header.classList.add("show"); return; }
+                    if (currentScroll > lastScroll && !header.classList.contains("hide")) { header.classList.remove("show"); header.classList.add("hide"); }
+                    else if (currentScroll < lastScroll && header.classList.contains("hide")) { header.classList.remove("hide"); header.classList.add("show"); }
+                    lastScroll = currentScroll;
+                });
+            }
+
+            const filterButton = document.getElementById("toggle-filter-btn");
+            const filterContainer = document.getElementById("filter-container");
+            if (filterButton && filterContainer) {
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.delete("sort_by");
+                if (urlParams.toString()) filterContainer.style.display = "block";
+                filterButton.addEventListener("click", () => {
+                    const isHidden = filterContainer.style.display === "none";
+                    filterContainer.style.display = isHidden ? "block" : "none";
+                });
+            }
+            window.cleanFilterForm = function (event) {
+                const form = document.getElementById("filter-form");
+                const inputs = form.querySelectorAll("input, select");
+                const disabledInputs = [];
+                inputs.forEach(input => {
+                    if (input.value === "" && input.name !== "sort_by") { input.disabled = true; disabledInputs.push(input); }
+                });
+                setTimeout(() => { disabledInputs.forEach(i => (i.disabled = false)); }, 0);
+                return true;
+            };
+
+            if (bookingCtaContainer) bookingCtaContainer.style.display = "none";
+        });
+    </script>
+
+
+
+</body>
+
+</html>
