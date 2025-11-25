@@ -4,15 +4,11 @@ import uuid # Для генерації унікальних імен
 from fastapi import UploadFile
 from typing import List
 
-# 1. Визначаємо, куди ми будемо зберігати файли.
-# Це папка 'static/images' у вашому 'hotel_service'
-# Path('.../hotel_service/app/backend/repositories') -> '.../hotel_service/app/frontend/static'
 STATIC_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "static")
 )
 IMAGES_DIR = os.path.join(STATIC_DIR, "images")
 
-# Переконаємося, що папка існує
 os.makedirs(IMAGES_DIR, exist_ok=True)
 
 
@@ -47,25 +43,19 @@ def save_images(image_files: List[UploadFile]) -> List[str]:
     saved_urls = [] # Тут ми збираємо URL успішно збережених файлів
     try:
         for file in image_files:
-            # Викликаємо нашу існуючу функцію для збереження одного файлу
             web_url = save_image(file)
             saved_urls.append(web_url)
             
     except ValueError as e:
-        # Помилка! (напр., поганий тип файлу). 
-        # Потрібно "відкотити" зміни - видалити все, що ми вже зберегли.
         print(f"Помилка завантаження: {e}. Виконую очищення...")
         for url in saved_urls:
             try:
                 remove_image(url)
             except OSError as remove_e:
-                # Логуємо, якщо не змогли видалити, але продовжуємо
                 print(f"Помилка при очищенні файлу {url}: {remove_e}")
                 
-        # Після очищення, "прокидаємо" помилку далі, щоб роутер її спіймав
         raise e 
     
-    # Якщо все пройшло добре, повертаємо список URL
     return saved_urls
 
 
@@ -85,10 +75,8 @@ def remove_image(web_url: str) -> bool:
             os.remove(file_path)
             return True
         else:
-            # Файл не знайдено (можливо, вже видалено)
             return False
             
     except Exception as e:
-        # Обробка будь-яких помилок (напр., Permission denied)
         print(f"Помилка при видаленні файлу {web_url}: {e}")
         return False
