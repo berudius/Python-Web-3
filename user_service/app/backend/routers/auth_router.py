@@ -47,7 +47,6 @@ async def update_user_phone_service(user_id: int, new_phone: str):
     
     try:
         async with AsyncClient() as client:
-            # Використовуємо PATCH, який ви вже реалізували в User Service
             resp = await client.patch(url, json=payload)
             if resp.status_code == 200:
                 print(f"User {user_id} phone updated to {new_phone}")
@@ -72,7 +71,6 @@ async def register_post(
 ):
     session = getSession(request, sessionStorage=session_storage)
     
-    # ... (перевірки наявності сесії та юзера залишаються тими ж) ...
     if session and session.get("user_id"):
           return RedirectResponse(url=f"{HOTEL_SERVICE_URL}/", status_code=303)
 
@@ -83,7 +81,7 @@ async def register_post(
     create_user(db, login, password)
     new_user = get_user_by_login(db, login)
 
-    # === ЛОГІКА ПРИВ'ЯЗКИ ===
+    # ЛОГІКА ПРИВ'ЯЗКИ 
     guest_booking_ids = session.get("guest_booking_ids", []) if session else []
     
     if new_user and guest_booking_ids:
@@ -93,8 +91,7 @@ async def register_post(
             # 1. Видаляємо ID зі словника в пам'яті
             session.pop("guest_booking_ids", None)
             
-            # 2. ТЕХНІЧНЕ РІШЕННЯ: Оновлюємо Redis напряму, не чіпаючи куки
-            # Отримуємо поточний ID сесії з куки (зазвичай ключ 'ssid', або як у вас в конфігу)
+            # 2. Оновлюємо Redis 
             session_id = request.cookies.get("ssid") 
             
             if session_id:
@@ -136,13 +133,12 @@ async def login_post(
     if not user:
         return templates.TemplateResponse("login.html", {"request": request, "error": "Невірний логін або пароль", "HOTEL_SERVICE_URL": HOTEL_SERVICE_URL, "USER_SERVICE_URL": USER_SERVICE_URL})
 
-    # === ДОДАТКОВА ПРИВ'ЯЗКА ПРИ ВХОДІ ===
+    #  ДОДАТКОВА ПРИВ'ЯЗКА ПРИ ВХОДІ
     # Це покриває випадок, коли користувач наробив бронювань ПІСЛЯ реєстрації, але ДО входу.
     if old_session:
         guest_booking_ids = old_session.get("guest_booking_ids", [])
         if guest_booking_ids:
             print(f"Found orphaned bookings during login: {guest_booking_ids}")
-            # Викликаємо ту саму функцію прив'язки
             await link_guest_bookings_service(user.id, guest_booking_ids)
         
         # Очищаємо стару сесію з Redis (Good Practice)
@@ -189,7 +185,7 @@ async def get_all_users_list(db: Session = Depends(get_db)):
     users = get_all_users(db)
     
     # Конвертуємо об'єкти SQLAlchemy у список словників,
-    # аналогічно до того, як ви це робите в get_user
+    # аналогічно до того, як  це зроблено в get_user
     users_data = [{
         "id": user.id,
         "login": user.login,
@@ -207,10 +203,10 @@ async def update_user_details(
     payload: UserUpdatePayload, 
     db: Session = Depends(get_db)
 ):
-    # 1. КРИТИЧНО ВАЖЛИВО: exclude_unset=True
+    #  КРИТИЧНО ВАЖЛИВО: exclude_unset=True
     # Цей параметр каже Pydantic'у: "Дай мені словник тільки з тих полів, 
     # які клієнт реально надіслав у JSON".
-    # Без цього Pydantic перетворив би пропущені поля в None, і ви б затерли дані в БД.
+    # Без цього Pydantic перетворив би пропущені поля в None, і затерлися б дані в БД.
     update_data = payload.dict(exclude_unset=True) 
 
     # 2. Перевірка на порожнечу (якщо клієнт надіслав порожній JSON {})
@@ -220,10 +216,8 @@ async def update_user_details(
             detail="No data provided for update"
         )
         
-    # 3. Виклик вашої функції репозиторію (вона працює чудово)
     updated_user_ = update_user(db, user_id=user_id, update_data=update_data)
 
-    # 4. Обробка результату
     if updated_user_ is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 
@@ -231,8 +225,6 @@ async def update_user_details(
         )
     
     # 5. Повернення даних
-    # Тут ми формуємо відповідь вручну, або повертаємо об'єкт, 
-    # якщо у вас налаштований response_model
     return {
         "id": updated_user_.id,
         "login": updated_user_.login,
